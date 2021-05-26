@@ -1,0 +1,52 @@
+##############################################################################
+#                                                                            #
+#            Make file for the Amiga version of UNACE using SAS C.           #
+#                                                                            #
+#                                                                            #
+# Rev 01  97/12/03  Wilfred van Velzen                                       #
+#                                                                            #
+##############################################################################
+#                                                                            #
+# To compile the Amiga version of UNACE with SAS C:                          #
+#                                                                            #
+# Copy the files "smakefile" and "scoptions" to the directory with all the   #
+# source files (*.c, *.h), and type "smake" on the commandline in a shell.   #
+#                                                                            #
+##############################################################################
+
+
+OBJS= Uac_crc.o Globals.o Uac_crt.o Unace.o Uac_sys.o Uac_dcpr.o Uac_comm.o
+
+CDEFINES = DEF=AMIGA
+
+
+Unace: $(OBJS)
+
+   sc link to Unace $(OBJS)
+
+
+Globals.o: Globals.c os.h acestruc.h unace.h declare.h portable.h
+
+Uac_crc.o: Uac_crc.c uac_crc.h declare.h os.h
+
+Uac_crt.o: Uac_crt.c os.h attribs.h globals.h uac_crt.h uac_sys.h unace.h \
+           acestruc.h declare.h portable.h
+
+Uac_comm.o: Uac_comm.c uac_dcpr.h uac_comm.h unace.h declare.h os.h
+
+Uac_dcpr.o: Uac_dcpr.c os.h globals.h portable.h uac_comm.h uac_crc.h \
+            uac_dcpr.h uac_sys.h unace.h acestruc.h declare.h
+
+Uac_sys.o: Uac_sys.c globals.h uac_sys.h unace.h acestruc.h declare.h \
+           portable.h os.h
+
+Unace.o: Unace.c os.h globals.h portable.h uac_comm.h uac_crc.h uac_crt.h \
+         uac_dcpr.h uac_sys.h unace.h acestruc.h declare.h
+
+
+.c.o:
+   sc $(CDEFINES) $<
+
+
+# end of makefile
+

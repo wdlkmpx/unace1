@@ -1,0 +1,12 @@
+SYSTEMNM= WINNT
+COMPNM  = BORLAND_C
+COMP    = bcc
+CFLAGS  = -3 -Ox -D$(COMPNM) -D$(SYSTEMNM)
+
+MODEL  = l
+SYSTEM = CON32
+
+FILES=unace.c uac_sys.c uac_crc.c uac_dcpr.c uac_comm.c uac_crt.c globals.c
+
+unace.exe: $(FILES)
+	$(COMP) $(CFLAGS) $(FILES)

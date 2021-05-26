@@ -1,0 +1,58 @@
+
+
+    Modifications made to ACE
+   ---------------------------
+
+     Intention
+    -----------
+      This file is to show inventions, bugfixes and other improvements made 
+      to public UNACE sources. This also helps to get to know about reasons 
+      of bugs.
+
+
+     Meaning of the symbols
+    ------------------------
+
+      $ modified
+      + new
+      - removed
+      ! bugfixed
+
+      * new release
+
+
+     History of changes
+    --------------------
+
+DATE      MODIFICATION
+(--2004--)
+
+10.1.     $ licence changed to GPL
+
+
+DATE      MODIFICATION
+
+(--1998--)
+
+10.1.     ! unstore function in uac_dcpr.c
+
+13.3.     + UNIX port
+
+15.5.     ! UNIX port
+
+          + '-y' switch
+
+*RELEASE
+UNACE-
+ SRCS 1.2a
+
+19.5.     + port to Visual Age for C++ for OS/2 
+
+          $ main()
+
+21.5.     + amiga/Readme.amiga
+
+          ! UNIX: mkdir now creates directories with permissions 0777 & umask
+
+          + unix/readme.txt to help people compile under UNIX
+
