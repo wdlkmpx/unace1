@@ -265,7 +265,7 @@ INT  open_archive(INT print_err)        // opens archive (or volume)
       printf("Authenticity Verification:");   // print the AV
       sprintf(av_str, "\ncreated on %d.%d.%d by ",
               ts_day(adat.time_cr), ts_month(adat.time_cr), ts_year(adat.time_cr));
-      printf(av_str);
+      printf("%s", av_str);
       copylen = mhead.AV_SIZE;
       if (copylen > 79)
         copylen = 79;
@@ -566,7 +566,7 @@ int main(INT argc, CHAR * argv[])              // processes the archive
    INT show_help,
        arg_cnt = 1;
 
-   printf(version);
+   printf("%s", version);
    show_help=0;
 
    if (argc < 3 || strlen(argv[1]) > 1 || argv[argc-1][0] == '-')
