@@ -23,11 +23,8 @@
 
 //--------------- include unace specific header files ----------------------//
 #include "globals.h"
-#include "uac_comm.h"
-#include "uac_crc.h"
+#include "uac.h"
 #include "uac_crt.h"
-#include "uac_dcpr.h"
-#include "uac_sys.h"
 
 //--------------- BEGIN OF UNACE ROUTINES ----------------------------------//
 

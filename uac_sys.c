@@ -13,8 +13,7 @@
 #include <ctype.h>   // tolower()
 
 #include "globals.h"
-#include "uac_sys.h"
-
+#include "uac.h"
 
 void memset16(USHORT * dest, SHORT val, INT len)  // fills short-array with
 {                                                 // value
@@ -44,23 +43,6 @@ INT  wrask(CHAR * s)            // prompt-routine
    fflush(stderr);
    return (ch == 'Y' ? 0 : (ch == 'A' ? 1 : (ch == 'N' ? 2 : 3)));
 }
-
-#ifdef NOSTRICMP
-INT stricmp( char *arg1, char *arg2 )
-{
-   INT chk;
-
-   if ( (!arg2) || (!arg1) )
-      return 1;
-   for ( ; *arg1 || *arg2; arg1++, arg2++ )
-      if ( (chk = tolower(*arg1) - tolower(*arg2)) )
-         if ( chk < 0 ) 
-            return -1;
-         else 
-            return 1;
-   return 0;
-}
-#endif /* NOSTRICMP */
 
 void beep(void)                           // makes some noise
 {

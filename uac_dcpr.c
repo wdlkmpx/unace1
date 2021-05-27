@@ -15,10 +15,8 @@
 #include <string.h>
 
 #include "globals.h"
-#include "uac_comm.h"
-#include "uac_crc.h"
-#include "uac_dcpr.h"
-#include "uac_sys.h"
+#include "uac.h"
+
 
 //------------------------------ QUICKSORT ---------------------------------//
 #define xchg_def(v1,v2) {INT dummy;\

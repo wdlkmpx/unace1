@@ -36,6 +36,8 @@ typedef int            INT   ;
   #define LO_HI_BYTE_ORDER
 #endif
 
+#define CASEINSENSE 1
+
 
 /* GENERIC: Convert to LONG or WORD from BYTE-Pointer-to-LOHI-byte-order data,
  *          without worrying if the bytes are word alined in memory.

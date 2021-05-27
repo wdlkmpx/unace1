@@ -15,7 +15,6 @@ INT  create_dest_file(CHAR * file, INT a);
   #define mkdir(_a) mkdir(_a,  S_IRWXU | S_IRWXG | S_IRWXO)
 #endif
 
-
 #ifndef _A_SUBDIR
   #define _A_SUBDIR 0x10        /* MS-DOS directory constant */
 #endif

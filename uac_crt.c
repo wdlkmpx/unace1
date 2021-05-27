@@ -21,7 +21,7 @@
 
 #include "globals.h"
 #include "uac_crt.h"
-#include "uac_sys.h"
+#include "uac.h"
 
 /* gets file name from header
  */
