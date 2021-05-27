@@ -21,10 +21,9 @@
 #endif
 
 //--------------- include unace specific header files ----------------------//
-#include "os.h"
+#include "declare.h"
 
 #include "globals.h"
-#include "portable.h"
 #include "uac_comm.h"
 #include "uac_crc.h"
 #include "uac_crt.h"

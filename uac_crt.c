@@ -6,7 +6,7 @@
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */
 
-#include "os.h"
+#include "declare.h"
 
 #include <fcntl.h>     // AMIGA: open()
 #include <stdio.h>     // printf() remove()

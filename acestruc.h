@@ -6,7 +6,6 @@
 #define __acestruc_h
 
 #include "declare.h"
-#include "portable.h"
 
 #define acesign_len           7
 #define bytes_before_acesign  7

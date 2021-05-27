@@ -6,14 +6,11 @@
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */
 
-#include "os.h"
+#include "declare.h"
 
 #include <signal.h>  // signal()
 #include <stdio.h>   // fprintf() fflush() getch() putc()
-
-#ifdef NOSTRICMP
- #include <ctype.h>  // tolower()
-#endif
+#include <ctype.h>   // tolower()
 
 #include "globals.h"
 #include "uac_sys.h"
@@ -39,7 +36,7 @@ INT  wrask(CHAR * s)            // prompt-routine
    do
    {
       ch = getch();
-      ch = upcase(ch);
+      ch = toupper(ch);
    }
    while (ch != 'Y' && ch != 'A' && ch != 'N' && ch != 'C' && ch != 27)
       ;

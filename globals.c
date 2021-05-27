@@ -6,11 +6,8 @@
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */
 
-#include "os.h"
-
 #include "acestruc.h"
 #include "unace.h"
-
 
 //-------- Ace sign
 const char *acesign = "**ACE**";

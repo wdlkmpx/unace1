@@ -8,14 +8,13 @@
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */
 
-#include "os.h"
+#include "declare.h"
 
 #include <stdio.h>   // printf()
 #include <stdlib.h>  // malloc()
 #include <string.h>
 
 #include "globals.h"
-#include "portable.h"
 #include "uac_comm.h"
 #include "uac_crc.h"
 #include "uac_dcpr.h"
