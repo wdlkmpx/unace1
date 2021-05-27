@@ -11,13 +11,6 @@
 #include <signal.h>  // signal()
 #include <stdio.h>   // fprintf() fflush() getch() putc()
 
-#if defined(DOS) || defined(WINNT) || defined(WIN16) || defined (VA_CPP)
- #include <conio.h>  // getch()
-#endif
-#if defined(DOS)
- #include <dos.h>    // delay() sound()
-#endif
-
 #ifdef NOSTRICMP
  #include <ctype.h>  // tolower()
 #endif
@@ -34,13 +27,6 @@ void memset16(USHORT * dest, SHORT val, INT len)  // fills short-array with
 
 INT  cancel(void)               // checks whether to interrupt the program
 {
-#ifdef DOS
-   while (kbhit())
-   {
-      if (getch() == 27)
-         f_err = ERR_USER;
-   }
-#endif
    return (f_err);
 }
 
@@ -81,13 +67,7 @@ INT stricmp( char *arg1, char *arg2 )
 
 void beep(void)                           // makes some noise
 {
-#ifdef DOS
-   sound(800);
-   delay(250);
-   nosound();
-#else
    putc(0x07, stdout);
-#endif
 }
 
 void my_signalhandler(INT sig_number)     // sets f_err if ctrl+c or ctrl+brk
@@ -96,31 +76,8 @@ void my_signalhandler(INT sig_number)     // sets f_err if ctrl+c or ctrl+brk
    printf("\nUser break\n");
 }
 
-#ifdef DOS                                // handles hardware errors
-#ifdef __BORLANDC__
-INT harderrhandler(UINT deverr, UINT errc, UINT * devhdr)
-#else
-INT __far harderrhandler(UINT deverr, UINT errc, UINT __far * devhdr)
-#endif
-{
-   f_criterr = 'A' + deverr & 0xff;
-   f_err = ERR_OTHER;
-   return (0x3);
-}
-#endif
-
 void set_handler(void)                    // initializes handlers
 {
-#if defined(DOS) && !defined(__BORLANDC__)
-   signal(SIGBREAK, my_signalhandler);    // set ctrl-break/-c handlers
-#endif
    signal(SIGINT, my_signalhandler);
-#if defined(DOS) && !defined(__CONSOLE__) // set hardware error handler
-#ifdef __BORLANDC__
-   harderr(harderrhandler);
-#else
-   _harderr(harderrhandler);
-#endif
-#endif
 }
 

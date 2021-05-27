@@ -36,18 +36,6 @@ void comment_out(CHAR *top)      // outputs comment if present
          comm_cpr_size = i;
       dcpr_comm(i);              // decompress comment
 
-#ifdef AMIGA
-      {
-         char *p=comm;
-         while (*p)
-         {
-            if (*p==0x0D)
-               *p=0x0A;          // Replace ms-dos line termination
-            p++;
-         }
-      }
-#endif
-
       printf("%s\n\n%s\n\n", top, comm); // output comment
    }
 }

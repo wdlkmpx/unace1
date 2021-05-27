@@ -13,20 +13,10 @@
 #include <string.h>    // strncpy()
 #include <sys/stat.h>  // struct stat
 
-#ifdef UNIX
+#ifdef _WIN32
+#include <direct.h>   // mkdir()
+#else
 #include <unistd.h>
-#else
- #if !defined(VA_CPP)
-  #include <dos.h>     // AMIGA: mkdir() rmdir() DOS: _dos_*()
- #endif
-#endif
-#if defined(DOS) || defined(WINNT) || defined(WIN16) || defined(VA_CPP)
- #include <io.h>       // access()
-#if defined(WATCOM_C) || defined(VA_CPP)
- #include <direct.h>   // mkdir()
-#else
- #include <dir.h>      // mkdir()
-#endif
 #endif
 
 #include "globals.h"
@@ -171,9 +161,6 @@ INT  create_dest_file(CHAR * file, INT a)  // creates file or directory
          printf("\n    Could not create directory.\n");
          return (-1);
       }
-#ifdef DOS
-      _dos_setfileattr(file, a);    // set directory attributes
-#endif
       return (-1);
    }
    else

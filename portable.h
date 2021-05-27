@@ -12,64 +12,17 @@
 
 #include "os.h"
 
-#ifdef  HI_LO_BYTE_ORDER
-
-/* All kinds of inplace swap routines, to reverse from LOHI to HILO byte order */
-
-#ifdef AMIGA
-
-#if __SASC && __VERSION__>=6 && __REVISION__>=58
-
-#define WORDswap(n)  (*(n) = __builtin_rol(*(n), 8, 1))
-#define LONGswap(n)  ( WORDswap(&((WORD *)(n))[0]),\
-                       WORDswap(&((WORD *)(n))[1]),\
-                       *(n) = __builtin_rol(*(n), 16, 2) )
-#else /* __SASC */
-
-#define EORSWAP
-
-#endif /* !__SASC */
-
-#endif /* AMIGA  */
-
-
-#ifdef EORSWAP
-
-/*  With some compilers and processors these work faster then the
- *  regular swap below, for example on a Amiga 68040 using SAS C 6.58.
- *  But using builtin rotates works even faster, see above.
- */
-
-#define WORDswap(n) (((BYTE*)(n))[0] ^= ((BYTE*)(n))[1],\
-                     ((BYTE*)(n))[1] ^= ((BYTE*)(n))[0],\
-                     ((BYTE*)(n))[0] ^= ((BYTE*)(n))[1])
-#define LONGswap(n) (((BYTE*)(n))[0] ^= ((BYTE*)(n))[3],\
-                     ((BYTE*)(n))[3] ^= ((BYTE*)(n))[0],\
-                     ((BYTE*)(n))[0] ^= ((BYTE*)(n))[3],\
-                     ((BYTE*)(n))[1] ^= ((BYTE*)(n))[2],\
-                     ((BYTE*)(n))[2] ^= ((BYTE*)(n))[1],\
-                     ((BYTE*)(n))[1] ^= ((BYTE*)(n))[2])
-#endif  /* EORSWAP */
-
-#ifndef WORDswap
-
-/* If not yet defined use the standard swaps */
-
-#define WORDswap(n)  (*(n) = (*(n) << 8) | (*(n) >> 8))
-#define LONGswap(n)  ( WORDswap(&((WORD *)(n))[0]),\
-                       WORDswap(&((WORD *)(n))[1]),\
-                       *(n) = (*(n) >> 16) | (*(n) << 16) )
-#endif /* WORDSWAP */
-
-#endif /* HI_LO_BYTE_ORDER */
-
-
 /* GENERIC: Convert to LONG or WORD from BYTE-Pointer-to-LOHI-byte-order data,
  *          without worrying if the bytes are word alined in memory.
  *  p is a pointer to char.
  */
 
 #ifdef HI_LO_BYTE_ORDER
+
+#define WORDswap(n)  (*(n) = (*(n) << 8) | (*(n) >> 8))
+#define LONGswap(n)  ( WORDswap(&((WORD *)(n))[0]),\
+                       WORDswap(&((WORD *)(n))[1]),\
+                       *(n) = (*(n) >> 16) | (*(n) << 16) )
 
 #define BUFP2WORD(p) ((UWORD)*(p)++ | ((*(p)++)<<8))
 #define BUFP2LONG(p) ((ULONG)*(p)++ | ((*(p)++)<<8) | ((*(p)++)<<16) | ((*(p)++)<<24))

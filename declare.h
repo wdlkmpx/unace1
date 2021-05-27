@@ -9,12 +9,6 @@
 #ifndef __declare_h
 #define __declare_h
 
-#ifdef AMIGA
-
-#include <exec/types.h>
-
-#else /* AMIGA */
-
 #include <stdint.h>
 
 typedef uint16_t       USHORT;
@@ -23,8 +17,6 @@ typedef uint16_t       UWORD ;
 typedef int16_t        WORD  ;
 typedef uint32_t       ULONG ;
 typedef int32_t        LONG  ;
-
-#endif  /* !AMIGA */
 
 typedef unsigned char  UCHAR ;
 typedef char           CHAR  ;

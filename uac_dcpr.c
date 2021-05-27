@@ -10,20 +10,9 @@
 
 #include "os.h"
 
-#if defined(AMIGA) || defined(UNIX)
- #include <string.h> // mem*()
-#endif
-#if defined(DOS) || defined(WIN16) || defined(WINNT) || defined(OS2)
- #if defined(VA_CPP)
-  #include <memory.h>
- #else
-  #include <mem.h>   // mem*()
- #endif
-#endif
-  
 #include <stdio.h>   // printf()
 #include <stdlib.h>  // malloc()
-
+#include <string.h>
 
 #include "globals.h"
 #include "portable.h"
