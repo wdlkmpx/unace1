@@ -27,6 +27,8 @@ typedef int            INT   ;
 #if defined(_WIN32)
   #define DIRSEP '\\'
   #define LO_HI_BYTE_ORDER
+#else
+  #define UNIX 1
 #endif
 
 #if defined(UNIX)

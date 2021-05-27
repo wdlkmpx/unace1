@@ -6,6 +6,7 @@
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */
 
+#include "declare.h"
 
 //--------------- include general files ------------------------------------//
 #include <ctype.h>      // tolower()
@@ -21,8 +22,6 @@
 #endif
 
 //--------------- include unace specific header files ----------------------//
-#include "declare.h"
-
 #include "globals.h"
 #include "uac_comm.h"
 #include "uac_crc.h"

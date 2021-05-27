@@ -5,7 +5,7 @@
 #ifndef __uac_crt_h
 #define __uac_crt_h
 
-
+#include "declare.h"
 #include "acestruc.h"
 
 CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size);
