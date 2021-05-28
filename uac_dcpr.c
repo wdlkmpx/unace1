@@ -150,7 +150,7 @@ void dcpr_comm(INT comm_size)
    SHORT hash[comm_cpr_hf(255, 255) + 1];
    INT  dpos = 0,
         c,
-        pos,
+        pos = 0,
         len,
         hs;
 
@@ -462,7 +462,7 @@ INT  dcpr_adds_blk(CHAR * buf, UINT len)
          f_err = ERR_OTHER;
          r = 0;
    }
-   rd_crc = getcrc(rd_crc, buf, r);
+   rd_crc = getcrc(rd_crc, (UCHAR*)buf, r);
    return r;
 }
 

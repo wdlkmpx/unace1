@@ -46,7 +46,7 @@ typedef struct tacemhead
    USHORT RES2;
    ULONG  RES;
    UCHAR  AV_SIZE;
-   UCHAR  AV[256];
+   CHAR   AV[256];
    USHORT COMM_SIZE;
    UCHAR  COMM[2048];
 
@@ -71,7 +71,7 @@ typedef struct tacefhead
    struct tech TECH;
    USHORT RESERVED;
    USHORT FNAME_SIZE;
-   UCHAR  FNAME[PATH_MAX];
+   CHAR   FNAME[PATH_MAX];
    USHORT COMM_SIZE;
    UCHAR  COMM[2048];
 

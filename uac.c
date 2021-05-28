@@ -8,7 +8,7 @@
 #include "uac.h"
 
 INT  comm_cpr_size=0;
-CHAR *comm;
+UCHAR *comm;
 
 // ==========================================================
 /*      Decompresses and outputs comment if present.       */
@@ -30,7 +30,7 @@ void comment_out(CHAR *top)      // outputs comment if present
          comm = FCOMM;
          comm_cpr_size = FCOMM_SIZE;
       }                          // limit comment size if too big
-      i = sizeof(head) - (INT)(comm - (CHAR*) &head);
+      i = sizeof(head) - (INT)(comm - (UCHAR*) &head);
       if (comm_cpr_size > i)
          comm_cpr_size = i;
       dcpr_comm(i);              // decompress comment

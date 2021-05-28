@@ -10,7 +10,7 @@
 
 /* comment */
 extern INT  comm_cpr_size;
-extern CHAR *comm;
+extern UCHAR *comm;
 void comment_out(CHAR *top);
 
 /* crc */

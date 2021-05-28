@@ -124,7 +124,7 @@ INT  read_header(INT print_err)         // reads any header from archive
       if (read(archan, buf, rd) < rd)
          return 0;
       head_size -= rd;
-      crc = getcrc(crc, buf, rd);
+      crc = getcrc(crc, (UCHAR*)buf, rd);
    }
 
    head.HEAD_TYPE =*tp++;               // generic buffer to head conversion
@@ -478,7 +478,7 @@ void list_files(int verbose)
             tpsize+= fhead.PSIZE;
          }
          if (!f_err)
-            printf("%02u.%02u.%02u|%02u:%02u|%c%c%9lu|%9lu|%4u%%|%c%s\n",
+            printf("%02u.%02u.%02u|%02u:%02u|%c%c%9u|%9u|%4u%%|%c%s\n",
                    ts_day (ti), ts_month(ti), ts_year(ti)%100,
                    ts_hour(ti), ts_min  (ti),
                    fhead.HEAD_FLAGS & ACE_SP_BEF   ? '<' : ' ',
@@ -491,7 +491,7 @@ void list_files(int verbose)
    }
    if (!f_err)
    {
-      printf("\n                 %9lu|%9lu|%4u%%| %u file%s",
+      printf("\n                 %9u|%9u|%4u%%| %u file%s",
              psize,
              size,
              percentage(psize, size),
