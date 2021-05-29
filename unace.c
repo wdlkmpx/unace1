@@ -302,7 +302,6 @@ INT  proc_vol(void)                     // opens volume
       do
       {
          sprintf(s, "Ready to process %s?", aname);
-         beep();
          i = wrask(s);                  // ask whether ready or not
          f_allvol_pr = 0;
          if(i == 1)                     // "Always" --> process all volumes

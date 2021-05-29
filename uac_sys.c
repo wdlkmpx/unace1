@@ -44,11 +44,6 @@ INT  wrask(CHAR * s)            // prompt-routine
    return (ch == 'Y' ? 0 : (ch == 'A' ? 1 : (ch == 'N' ? 2 : 3)));
 }
 
-void beep(void)                           // makes some noise
-{
-   putc(0x07, stdout);
-}
-
 void my_signalhandler(INT sig_number)     // sets f_err if ctrl+c or ctrl+brk
 {
    f_err = ERR_USER;
