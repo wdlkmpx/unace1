@@ -1,0 +1,4 @@
+*.o
+mtrace*.txt
+unace
+makefile.dep
