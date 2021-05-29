@@ -31,9 +31,7 @@ void dcpr_init_file(void);
 
 /* basic things */
 void memset16(USHORT * dest, SHORT val, INT len);
-INT  cancel(void);
 INT  wrask(CHAR * s);
-void set_handler(void);
 #if defined(UNIX)
   #define getch() getchar()
 #endif /* UNIX */

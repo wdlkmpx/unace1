@@ -8,7 +8,6 @@
 
 #include "declare.h"
 
-#include <signal.h>  // signal()
 #include <stdio.h>   // fprintf() fflush() getch() putc()
 #include <ctype.h>   // tolower()
 
@@ -19,11 +18,6 @@ void memset16(USHORT * dest, SHORT val, INT len)  // fills short-array with
 {                                                 // value
    while (len--)
       *(dest++) = val;
-}
-
-INT  cancel(void)               // checks whether to interrupt the program
-{
-   return (f_err);
 }
 
 INT  wrask(CHAR * s)            // prompt-routine
@@ -43,15 +37,3 @@ INT  wrask(CHAR * s)            // prompt-routine
    fflush(stderr);
    return (ch == 'Y' ? 0 : (ch == 'A' ? 1 : (ch == 'N' ? 2 : 3)));
 }
-
-void my_signalhandler(INT sig_number)     // sets f_err if ctrl+c or ctrl+brk
-{
-   f_err = ERR_USER;
-   printf("\nUser break\n");
-}
-
-void set_handler(void)                    // initializes handlers
-{
-   signal(SIGINT, my_signalhandler);
-}
-

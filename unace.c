@@ -19,6 +19,7 @@
 #include <stdlib.h>     // malloc()
 #include <string.h>     // str*()
 #include <sys/stat.h>   // 
+#include <signal.h>     // signal()
 
 #if defined(UNIX)
  #include <unistd.h>
@@ -31,6 +32,18 @@
 #include "uac_crt.h"
 
 //--------------- BEGIN OF UNACE ROUTINES ----------------------------------//
+
+static INT cancel(void)               // checks whether to interrupt the program
+{
+   return (f_err);
+}
+
+static void my_signalhandler(INT sig_number)     // sets f_err if ctrl+c or ctrl+brk
+{
+   f_err = ERR_USER;
+   printf("\nUser break\n");
+}
+
 
 #ifdef CASEINSENSE
 
@@ -85,7 +98,7 @@ void init_unace(void)           // initializes unace
    make_crctable();             // initialize CRC table
    dcpr_init();                 // initialize decompression
 
-   set_handler();               // ctrl+break etc.
+   signal(SIGINT, my_signalhandler); // ctrl+break etc.
 }
 
 void done_unace(void)
