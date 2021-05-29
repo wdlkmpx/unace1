@@ -7,8 +7,7 @@
      2. Platform compability
      3. Compiling
      4. Warranty
-     5. Latest public UNACE
-     6. Thanks
+     5. Thanks
 
 ------------------------------------------------------------------------------
 
@@ -27,29 +26,11 @@
 
   2. Platform compatibility
  ---------------------------
-      There are different makefiles and OS.H files in the directories of
-      public UNACE. Just copy the files of the directory for the system
-      you want to compile for. It might be necessary to modify different
-      things a bit to get it working with new compilers.
-      If you had to do so, please tell me about these changes!
-
-      This source has been tested as 16bit and 32bit MS-DOS, 16bit and 32bit
-      Windows (character mode), Amiga, PPC-Amiga and LINUX executable.
-
-      If you have any suggestions to make it more compatible for
-      other platforms tell me please:
-
-        email: mlemke@winace.com
-
+      Linux, Windows and probably other OS's
 
   3. Compiling
  --------------
-      To get UNACE.EXE choose the correct makefile and copy it to the source
-      directory to run your MAKE-utility on it.
-
-      Choose a 32bit target if possible. Otherwhise there might be not enough
-      memory to decompress archives with dictionaries larger than 32kb.
-
+      run 'make'
 
   4. Warranty
  -------------
