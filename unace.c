@@ -8,6 +8,10 @@
 
 #include "declare.h"
 
+#if defined(unace_TRACE) && defined(__GLIBC__)
+#include <mcheck.h>
+#endif
+
 //--------------- include general files ------------------------------------//
 #include <ctype.h>      // tolower()
 #include <fcntl.h>      // open()
@@ -523,6 +527,11 @@ void showhelp(void)
 
 int main(INT argc, CHAR * argv[])              // processes the archive
 {
+
+#if defined(unace_TRACE) && defined(__GLIBC__)
+   mtrace();
+#endif
+
    INT show_help,
        arg_cnt = 1;
 
