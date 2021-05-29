@@ -29,13 +29,9 @@ void dcpr_init(void);
 INT  dcpr_adds_blk(CHAR * buf, UINT len);
 void dcpr_init_file(void);
 
-/* basic things */
-void memset16(USHORT * dest, SHORT val, INT len);
-INT  wrask(CHAR * s);
 #if defined(UNIX)
   #define getch() getchar()
 #endif /* UNIX */
-
 
 #endif /* __uac_comm_h */
 

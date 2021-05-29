@@ -8,6 +8,7 @@
 #include "declare.h"
 #include "acestruc.h"
 
+INT  wrask(CHAR * s);
 CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size);
 INT  create_dest_file(CHAR * file, INT a);
 

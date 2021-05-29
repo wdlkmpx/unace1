@@ -17,6 +17,11 @@
 #include "globals.h"
 #include "uac.h"
 
+static void memset16(USHORT * dest, SHORT val, INT len)  // fills short-array with
+{                                                 // value
+   while (len--)
+      *(dest++) = val;
+}
 
 //------------------------------ QUICKSORT ---------------------------------//
 #define xchg_def(v1,v2) {INT dummy;\

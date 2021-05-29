@@ -1,6 +1,6 @@
 
-OBJ = globals.o uac.o uac_crt.o uac_dcpr.o uac_sys.o unace.o
-SRC = globals.c uac.c uac_crt.c uac_dcpr.c uac_sys.c unace.c
+OBJ = globals.o uac.o uac_crt.o uac_dcpr.o unace.o
+SRC = globals.c uac.c uac_crt.c uac_dcpr.c unace.c
 
 #CFLAGS = -DHI_LO_BYTE_ORDER  #select correct byte order for your machine!!
 #CFLAGS = -Wall -O3 -s #-DNDEBUG

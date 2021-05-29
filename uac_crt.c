@@ -12,6 +12,7 @@
 #include <stdio.h>     // printf() remove()
 #include <string.h>    // strncpy()
 #include <sys/stat.h>  // struct stat
+#include <ctype.h>   // tolower()
 
 #ifdef _WIN32
 #include <direct.h>   // mkdir()
@@ -22,6 +23,25 @@
 #include "globals.h"
 #include "uac_crt.h"
 #include "uac.h"
+
+// prompt-routine
+INT  wrask(CHAR * s)
+{
+   INT  ch;
+
+   fprintf(stderr, "\n %s (Yes,Always,No,Cancel) ", s);
+   fflush(stderr);
+   do {
+      ch = getch();
+      ch = toupper(ch);
+   }
+   while (ch != 'Y' && ch != 'A' && ch != 'N' && ch != 'C' && ch != 27)
+      ;
+   fprintf(stderr, "%s", ch == 'Y' ? "Yes" : (ch == 'A' ? "Always" : (ch == 'N' ? "No" : "Cancel")));
+   fflush(stderr);
+   return (ch == 'Y' ? 0 : (ch == 'A' ? 1 : (ch == 'N' ? 2 : 3)));
+}
+
 
 /* gets file name from header
  */
