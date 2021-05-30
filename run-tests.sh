@@ -96,6 +96,16 @@ else
 	echo "ERROR"
 fi
 
+printf "* tests/aclocal.ace: "
+rm -rf aclocal
+${app} x -y ${MWD}/tests/aclocal.ace >${TESTDIR}/aclocal.log 2>&1
+if [ $? -eq 0 ] && [ $(find aclocal -type f | wc -l) -eq 77 ] ; then
+	check_md5 ${MWD}/tests/aclocal.md5 aclocal.log
+else
+	ret=1
+	echo "ERROR"
+fi
+
 # ===========================================================================
 
 if test -z "$KEEP_TESTS" ; then
