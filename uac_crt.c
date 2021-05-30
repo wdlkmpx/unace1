@@ -110,33 +110,27 @@ CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size, INT extra
    return s;
 }
 
-void check_ext_dir(CHAR * f)        // checks/creates path of file
+static void mksubdirs (CHAR * f)        // checks/creates path of file
 {
-   CHAR *cp,
-        d[PATH_MAX];
-   unsigned int i;
+   CHAR d[PATH_MAX];
+   CHAR *p = d;
+   size_t len = (strlen (f) >= PATH_MAX) ? (PATH_MAX - 1) : (strlen (f));
+   strncpy (d, f, len);
 
-   d[0] = 0;
-
-   for (;;)
+   while (p && *p)
    {
-      if ((cp = (CHAR *) strchr(&f[strlen(d) + 1], DIRSEP))!=NULL)
-      {
-         i = cp - f;
-         if (i > (PATH_MAX - 1))
-           i = PATH_MAX - 1;
-         strncpy(d, f, i);
-         d[i] = 0;
-      }
-      else
+      p = strchr (p, DIRSEP);
+      if (!p)
          return;
-
-      if (!fileexists(d))
-         if (mkdir(d))
-         {
+      *p = 0;
+      if (!fileexists(d)) {
+         if (mkdir(d)) {
             f_err = ERR_WRITE;
             printf("\n    Error while creating directory.\n");
          }
+     }
+     *p = DIRSEP;
+     p++;
    }
 }
 
@@ -157,7 +151,7 @@ FILE * create_dest_file (CHAR * file, INT a)  // creates file or directory
         ex = fileexists(file);
    struct stat st;
 
-   check_ext_dir(file);
+   mksubdirs (file);
    if (f_err)
       return (NULL);
    if (a & _A_SUBDIR)
