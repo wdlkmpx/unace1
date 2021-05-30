@@ -414,7 +414,7 @@ void extract_file(void)         // extracts one file
    flush;                       // decompress block
    while (!cancel() && (rd = dcpr_adds_blk(buf_wr, size_wrb)))
    {
-      if (write(wrhan, buf_wr, rd) != rd)       // write block
+      if (fwrite (buf_wr, 1, rd, wrhan) != rd)       // write block
       {                         
          printf("\nWrite error\n");
          f_err = ERR_WRITE;
@@ -441,7 +441,7 @@ void extract_files(int nopath, int test)
          if (!f_err)
          {
             if (test || 
-                (wrhan = create_dest_file(file, (INT) fhead.ATTR))<0)
+                (wrhan = create_dest_file(file, (INT) fhead.ATTR)) == NULL)
             {
                if (test || adat.sol)
                   analyze_file();        // analyze file
@@ -449,7 +449,7 @@ void extract_files(int nopath, int test)
             else
             {
                extract_file();           // extract it
-               close(wrhan);
+               fclose (wrhan);
                if (f_err)
                   remove(file);
             }

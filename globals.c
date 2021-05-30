@@ -8,6 +8,7 @@
 
 #include "acestruc.h"
 #include "unace.h"
+#include <stdio.h>
 
 //-------- Ace sign
 const char *acesign = "**ACE**";
@@ -57,8 +58,8 @@ UCHAR sort_freq[(maxcode + 2) * 2];
 
 //-------- file handling
 CHAR aname[PATH_MAX];
-INT  archan,
-     wrhan;
+INT  archan;
+FILE * wrhan;
 LONG skipsize=0;
 
 //-------- structures for archive handling
