@@ -66,7 +66,7 @@ extern UCHAR sort_freq[(maxcode + 2) * 2];
 //-------- file handling
 extern CHAR aname[PATH_MAX];
 extern FILE * archive_fp;
-extern FILE * wrhan;
+extern FILE * outfile_fp;
 extern LONG skipsize;
 
 //-------- structures for archive handling
