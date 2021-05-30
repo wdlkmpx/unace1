@@ -58,8 +58,8 @@ UCHAR sort_freq[(maxcode + 2) * 2];
 
 //-------- file handling
 CHAR aname[PATH_MAX];
-INT  archan;
-FILE * wrhan;
+FILE * archive_fp = NULL;
+FILE * wrhan = NULL;
 LONG skipsize=0;
 
 //-------- structures for archive handling

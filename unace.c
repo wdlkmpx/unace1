@@ -118,9 +118,9 @@ INT  read_header(INT print_err)         // reads any header from archive
    LONG crc;
    UCHAR *tp=readbuf;
 
-   lseek(archan, skipsize, SEEK_CUR);   // skip ADDSIZE block
+   fseek (archive_fp, skipsize, SEEK_CUR);   // skip ADDSIZE block
 
-   if (read(archan, &head, 4)<4)
+   if (fread(&head, 1, 4, archive_fp) < 4)
       return 0;                         // read CRC and header size
 
 #ifdef HI_LO_BYTE_ORDER
@@ -130,7 +130,7 @@ INT  read_header(INT print_err)         // reads any header from archive
                                         // read size_headrdb bytes into 
    head_size = head.HEAD_SIZE;          // header structure 
    rd = (head_size > size_headrdb) ? size_headrdb : head_size;
-   if (read(archan, readbuf, rd) < rd)
+   if (fread(readbuf, 1, rd, archive_fp) < rd)
       return 0;
    head_size -= rd;
    crc = getcrc(CRC_MASK, readbuf, rd);
@@ -138,7 +138,7 @@ INT  read_header(INT print_err)         // reads any header from archive
    while (head_size)                    // skip rest of header
    {                            
       rd = (head_size > size_buf) ? size_buf : head_size;
-      if (read(archan, buf, rd) < rd)
+      if (fread(buf, 1, rd, archive_fp) < rd)
          return 0;
       head_size -= rd;
       crc = getcrc(crc, (UCHAR*)buf, rd);
@@ -203,14 +203,14 @@ INT read_arc_head(void)         // searches for the archive header and reads it
         fpos = 0;
    struct stat st;
 
-   fstat(archan, &st);
+   fstat (fileno(archive_fp), &st);
 
    memset(buf, 0, size_buf);
 
-   while (lseek(archan, 0, SEEK_CUR)<st.st_size && fpos < max_sfx_size)
+   while (fseek (archive_fp, 0, SEEK_CUR)<st.st_size && fpos < max_sfx_size)
    {
       old_fpos = fpos;
-      fpos += read(archan, &buf[buf_pos], size_buf - buf_pos);
+      fpos += fread (&buf[buf_pos], 1, size_buf - buf_pos, archive_fp);
 
       for (i = 0; i < size_buf; i++)    // look for the acesign
       {                         
@@ -219,7 +219,7 @@ INT read_arc_head(void)         // searches for the archive header and reads it
                                         // seek to the probable begin 
                                         // of the archive
             arc_head_pos = old_fpos + i - buf_pos -  bytes_before_acesign;
-            lseek(archan, arc_head_pos, SEEK_SET);
+            fseek (archive_fp, arc_head_pos, SEEK_SET);
             if (read_header(0))         // try to read archive header
             {                           
                flags = mhead.HEAD_FLAGS;
@@ -233,7 +233,7 @@ INT read_arc_head(void)         // searches for the archive header and reads it
       }
                                         // was no archive header,
                                         // continue search
-      lseek(archan, fpos, SEEK_SET);
+      fseek (archive_fp, fpos, SEEK_SET);
       memcpy(buf, &buf[size_buf - 512], 512);
       buf_pos = 512;                    // keep 512 old bytes
    }
@@ -245,9 +245,9 @@ INT  open_archive(INT print_err)        // opens archive (or volume)
    CHAR av_str[80];
    unsigned int copylen;
 
-   archan = open(aname, O_RDONLY | O_BINARY);   // open file
+   archive_fp = fopen (aname, "rb");   // open file
 
-   if (archan == -1)
+   if (archive_fp == NULL)
    {
       printf("\nError opening file %s", aname);
       return 0;
@@ -256,7 +256,7 @@ INT  open_archive(INT print_err)        // opens archive (or volume)
    {                            
       if (print_err)
          printf("\nInvalid archive file: %s\n", aname);
-      close(archan);
+      fclose (archive_fp);
       return 0;
    }
 
@@ -340,7 +340,7 @@ INT  proc_vol(void)                     // opens volume
 
 INT  proc_next_vol(void)        // opens next volume to process
 {
-   close(archan);               // close handle
+   fclose (archive_fp);               // close handle
    get_next_volname();          // get file name of next volume
 
    if (!proc_vol())             // try to open volume, read archive header
@@ -365,7 +365,7 @@ INT  read_adds_blk(CHAR * buffer, INT len)      // reads part of ADD_SIZE block
       skipsize -= i;
 
       errno = 0;
-      rd += read(archan, buffer, i);
+      rd += fread(buffer, 1, i, archive_fp);
       if (errno)
       {
          printf("\nRead error\n");
@@ -597,7 +597,7 @@ int main(INT argc, CHAR * argv[])              // processes the archive
                default : showhelp();                  // Wrong command!
             }
 
-         close(archan);
+         fclose (archive_fp);
          if (f_err)
          {
             printf("\nError occurred\n");

@@ -20,9 +20,5 @@ FILE * create_dest_file (CHAR * file, INT a);
   #define _A_SUBDIR 0x10        /* MS-DOS directory constant */
 #endif
 
-#ifndef O_BINARY
-  #define O_BINARY 0
-#endif
-
 #endif /* __uac_crt_h */
 
