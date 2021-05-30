@@ -156,11 +156,11 @@ FILE * create_dest_file (CHAR * file, INT a)  // creates file or directory
       return (NULL);
    if (a & _A_SUBDIR)
    {                                // create dir or file?
-      if (ex) stat(file, &st);
-      if (ex ? (st.st_mode & S_IFDIR) : mkdir(file))
-      {
-         printf("\n    Could not create directory.\n");
-         return (NULL);
+      if (ex) {
+         stat (file, &st);
+         if (!(st.st_mode & S_IFDIR) && mkdir(file)) {
+             printf("\n    Could not create directory.\n");
+         }
       }
       return (NULL);
    }
