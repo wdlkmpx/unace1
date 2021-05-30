@@ -5,7 +5,6 @@
 #ifndef __uac_comm_h
 #define __uac_comm_h
 
-
 #include "declare.h"
 
 /* comment */
@@ -21,7 +20,7 @@ extern ULONG rd_crc;
 ULONG getcrc(ULONG crc, UCHAR * addr, INT len);
 void  make_crctable(void);
 
-/* decompression */
+/* uac_dcpr.c - decompression */
 INT  calc_dectabs(void);
 void dcpr_comm(INT comm_size);
 INT  read_wd(UINT maxwd, USHORT * code, UCHAR * wd, INT max_el);
@@ -29,9 +28,10 @@ void dcpr_init(void);
 INT  dcpr_adds_blk(CHAR * buf, UINT len);
 void dcpr_init_file(void);
 
-#if defined(UNIX)
-  #define getch() getchar()
-#endif /* UNIX */
+/* uac_crt.c - file creation */
+INT  wrask(CHAR * s);
+CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size, INT extract);
+FILE * create_dest_file (CHAR * file, INT a);
 
 #endif /* __uac_comm_h */
 

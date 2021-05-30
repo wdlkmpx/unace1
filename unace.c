@@ -29,7 +29,6 @@
 //--------------- include unace specific header files ----------------------//
 #include "globals.h"
 #include "uac.h"
-#include "uac_crt.h"
 
 //--------------- BEGIN OF UNACE ROUTINES ----------------------------------//
 

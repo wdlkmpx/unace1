@@ -8,7 +8,6 @@
 
 #include "declare.h"
 
-#include <fcntl.h>     // AMIGA: open()
 #include <stdio.h>     // printf() remove()
 #include <string.h>    // strncpy()
 #include <sys/stat.h>  // struct stat
@@ -18,11 +17,16 @@
 #include <direct.h>   // mkdir()
 #else
 #include <unistd.h>
+#define mkdir(_a) mkdir(_a,  S_IRWXU | S_IRWXG | S_IRWXO)
 #endif
 
 #include "globals.h"
-#include "uac_crt.h"
 #include "uac.h"
+
+#ifndef _A_SUBDIR
+  #define _A_SUBDIR 0x10        /* MS-DOS directory constant */
+#endif
+
 
 // prompt-routine
 INT  wrask(CHAR * s)
@@ -32,7 +36,7 @@ INT  wrask(CHAR * s)
    fprintf(stderr, "\n %s (Yes,Always,No,Cancel) ", s);
    fflush(stderr);
    do {
-      ch = getch();
+      ch = getchar();
       ch = toupper(ch);
    }
    while (ch != 'Y' && ch != 'A' && ch != 'N' && ch != 'C' && ch != 27)
