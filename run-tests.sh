@@ -4,7 +4,7 @@
 
 MWD=$(pwd)
 TESTDIR="$HOME/.cache/unace1tests"
-remove_test_dir=1 # comment out
+#remove_test_dir=1 # comment out
 mkdir -p "${TESTDIR}"
 
 app="$(pwd)/unace"
@@ -37,7 +37,15 @@ ret=0
 
 echo
 printf "* tests/dirtraversal1.ace: "
-${app} x ${MWD}/tests/dirtraversal1.ace >${TESTDIR}/dirtraversal1.log 2>&1
+${app} x -y ${MWD}/tests/dirtraversal1.ace >${TESTDIR}/dirtraversal1.log 2>&1
+if [ $? -eq 7 ] ; then
+	echo "OK"
+else
+	echo "ERROR"
+fi
+
+printf "* tests/dirtraversal2.ace: "
+${app} x -y ${MWD}/tests/dirtraversal2.ace >${TESTDIR}/dirtraversal2.log 2>&1
 if [ $? -eq 7 ] ; then
 	echo "OK"
 else

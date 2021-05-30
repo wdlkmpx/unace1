@@ -9,7 +9,7 @@
 #include "acestruc.h"
 
 INT  wrask(CHAR * s);
-CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size);
+CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size, INT extract);
 INT  create_dest_file(CHAR * file, INT a);
 
 #ifdef UNIX

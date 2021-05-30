@@ -434,7 +434,7 @@ void extract_files(int nopath, int test)
       if (head.HEAD_TYPE == FILE_BLK)
       {
          comment_out("File comment:");   // show file comment
-         ace_fname(file, &head, nopath, sizeof(file)); // get file name
+         ace_fname(file, &head, nopath, sizeof(file), 1); // get file name
          printf("\n%s", file);
          flush;
          dcpr_init_file();               // initialize decompression of file
@@ -478,7 +478,7 @@ void list_files(int verbose)
       if (head.HEAD_TYPE == FILE_BLK)
       {
          ULONG ti=fhead.FTIME;
-         ace_fname(file, &head, verbose ? 0 : 1, sizeof(file)); // get file name
+         ace_fname(file, &head, verbose ? 0 : 1, sizeof(file), 0); // get file name
 
          size  += fhead.SIZE;
          psize +=
