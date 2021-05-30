@@ -2,8 +2,6 @@
 OBJ = globals.o uac.o uac_crt.o uac_dcpr.o unace.o
 SRC = globals.c uac.c uac_crt.c uac_dcpr.c unace.c
 
-#CFLAGS = -DHI_LO_BYTE_ORDER  #select correct byte order for your machine!!
-#CFLAGS = -Wall -O3 -s #-DNDEBUG
 #CFLAGS = -g -Wall -DMDEBUG
 #CFLAGS = -O3 -fno-strength-reduce -fomit-frame-pointer # These are for Linux
 

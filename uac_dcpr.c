@@ -99,7 +99,7 @@ void readdat(void)
    buf_rd[0] = buf_rd[size_rdb - 2];
    buf_rd[1] = buf_rd[size_rdb - 1];
    read_adds_blk((CHAR *) & buf_rd[2], i);
-#ifdef HI_LO_BYTE_ORDER
+#ifdef __BIG_ENDIAN__
    {
       ULONG *p;
       i>>=2;    // count LONGs not BYTEs
@@ -134,7 +134,7 @@ void dcpr_comm_init(void)
    i = comm_cpr_size > size_rdb * sizeof(LONG) ? size_rdb * sizeof(LONG) : comm_cpr_size;
    if (!f_err)
       memcpy(buf_rd, comm, i);
-#ifdef HI_LO_BYTE_ORDER
+#ifdef __BIG_ENDIAN__
    {
       ULONG *p;
       i>>=2;    // count LONGs not BYTEs
@@ -507,7 +507,7 @@ void dcpr_init_file(void)
 
       i = size_rdb * sizeof(LONG);
       read_adds_blk((CHAR *) buf_rd, i);
-#ifdef HI_LO_BYTE_ORDER
+#ifdef __BIG_ENDIAN__
       {
          ULONG *p;
          i>>=2;    // count LONGs not BYTEs
