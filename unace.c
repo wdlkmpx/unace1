@@ -83,10 +83,10 @@ INT fileexists_insense(char *name)
 
 void init_unace(void)           // initializes unace
 {
-   buf_rd =malloc(size_rdb * sizeof(ULONG));  // Allocate buffers: increase
-   buf    =malloc(size_buf);                  // sizes when possible to speed
-   buf_wr =malloc(size_wrb);                  // up the program
-   readbuf=malloc(size_headrdb);
+   buf_rd = (ULONG*) malloc(size_rdb * sizeof(ULONG));  // Allocate buffers: increase
+   buf    = (char*) malloc(size_buf);                  // sizes when possible to speed
+   buf_wr = (char*) malloc(size_wrb);                  // up the program
+   readbuf= (UCHAR*) malloc(size_headrdb);
 
    if (buf_rd ==NULL ||
        buf    ==NULL ||

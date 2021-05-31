@@ -29,7 +29,7 @@
 
 
 // prompt-routine
-INT  wrask(CHAR * s)
+INT  wrask(const CHAR * s)
 {
    INT  ch;
 

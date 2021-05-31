@@ -14,7 +14,7 @@ UCHAR *comm;
 /*      Decompresses and outputs comment if present.       */
 // ==========================================================
 
-void comment_out(CHAR *top)      // outputs comment if present
+void comment_out(const CHAR *top)      // outputs comment if present
 {
    INT  i;
 

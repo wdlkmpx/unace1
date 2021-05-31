@@ -10,7 +10,7 @@
 /* comment */
 extern INT  comm_cpr_size;
 extern UCHAR *comm;
-void comment_out(CHAR *top);
+void comment_out(const CHAR *top);
 
 /* crc */
 #define CRC_MASK 0xFFFFFFFFL
@@ -29,7 +29,7 @@ INT  dcpr_adds_blk(CHAR * buf, UINT len);
 void dcpr_init_file(void);
 
 /* uac_crt.c - file creation */
-INT  wrask(CHAR * s);
+INT  wrask(const CHAR * s);
 CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size, INT extract);
 FILE * create_dest_file (CHAR * file, INT a);
 

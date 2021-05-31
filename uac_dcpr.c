@@ -478,7 +478,7 @@ void dcpr_init(void)
    dcpr_frst_file = 1;
 
    dcpr_dic = 20;
-   while ((dcpr_text = malloc(dcpr_dicsiz = (LONG) 1 << dcpr_dic))==NULL)
+   while ((dcpr_text = (char*) malloc(dcpr_dicsiz = (LONG) 1 << dcpr_dic))==NULL)
       dcpr_dic--;
    dcpr_dican = dcpr_dicsiz - 1;
 }
