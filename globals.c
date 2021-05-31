@@ -69,7 +69,6 @@ struct tadat adat;
 INT  f_err      =0,
      f_err_crc  =0,
      f_ovrall   =0,
-     f_allvol_pr=0,
      f_curpas   =0,
      f_criterr  =0;
 

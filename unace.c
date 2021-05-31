@@ -279,7 +279,7 @@ INT  open_archive(INT print_err)        // opens archive (or volume)
 
 void get_next_volname(void)             // get file name of next volume
 {
-   CHAR *cp;
+   CHAR *cp, *c = NULL;
    INT  num;
 
    if ((cp = (CHAR *) strrchr(aname, '.')) == NULL || !*(cp + 1))
@@ -295,40 +295,23 @@ void get_next_volname(void)             // get file name of next volume
    }
    num++;
 
-   if (num < 100)
+   if (num < 100) {
       *cp = 'C';
-   else
+      c = cp;
+   } else {
       *cp = num / 100 + '0';
+   }
    *(cp + 1) = (num / 10) % 10 + '0';
    *(cp + 2) = num % 10 + '0';
+   // UNIX: C00 & c00 are different strings
+   if (c && !fileexists (aname)) {
+      *c = 'c';
+   }
 }
 
-INT  proc_vol(void)                     // opens volume
+INT  proc_vol(void) // open volume
 {
-   INT  i;
-   CHAR s[PATH_MAX + 80];
-
-   // if f_allvol_pr is 2 we have -y and should never ask
-   if ((!fileexists_insense(aname) && f_allvol_pr != 2) || !f_allvol_pr)
-   {
-      do
-      {
-         sprintf(s, "Ready to process %s?", aname);
-         i = wrask(s);                  // ask whether ready or not
-         f_allvol_pr = 0;
-         if(i == 1)                     // "Always" --> process all volumes
-             f_allvol_pr = 1;
-         if (i >= 2)
-         {
-            f_err = ERR_FOUND;
-            return 0;
-         }
-      }
-      while (!fileexists_insense(aname));
-   }
-
-   if (!open_archive(1))                // open volume
-   {                            
+   if (!open_archive(1)) {
       printf("\nError while opening archive. File not found or archive broken.\n");
       f_err = ERR_OPEN;
       return 0;
@@ -558,7 +541,6 @@ int main(INT argc, CHAR * argv[])              // processes the archive
       {
          case 'y':
             f_ovrall    = 1;      // Overwrite all
-            f_allvol_pr = 2;      // Process all volumes, and never ask
             break;
          default:
             show_help = 1;
