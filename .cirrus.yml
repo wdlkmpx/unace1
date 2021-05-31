@@ -1,0 +1,8 @@
+#freebsd-13-0
+
+freebsd_instance:
+  image_family: freebsd-11-4
+
+task:
+#  install_script: pkg install -y gcc
+  script: ./run-tests.sh

@@ -10,28 +10,6 @@ mkdir -p "${TESTDIR}"
 app="$(pwd)/unace"
 appbn=$(basename $app)
 
-if ! test -f configure ; then
-	if test -f autogen.sh ; then
-		./autogen.sh
-	fi
-fi
-
-if test -f configure ; then
-	if ! test -f config.h ; then
-		./configure ${configure_opts}
-	fi
-fi
-
-if test -f Makefile ; then
-	${make_clean}
-	make CFLAGS="-D${appbn}_TRACE -ggdb3"
-fi
-
-if ! test -f ${app} ; then
-	echo "$app not found"
-	exit 1
-fi
-
 # ===========================================================================
 
 if test -z "$MD5SUM" ; then
@@ -40,6 +18,20 @@ if test -z "$MD5SUM" ; then
 	elif command -v gmd5sum 2>/dev/null ; then
 		MD5SUM='gmd5sum'
 	fi
+fi
+
+comp=
+for i in cc gcc clang
+do
+	comp=$(command -v $i 2>/dev/null)
+	if test -n "$comp" ; then
+		CC="CC=${comp}"
+	fi
+done
+echo $CC
+
+if [ "${comp}" = "clang" ] ; then
+	sh --version # it might not be bash, need to know
 fi
 
 check_md5()
@@ -57,6 +49,30 @@ check_md5()
 	fi
 
 }
+
+# ===========================================================================
+
+if ! test -f configure ; then
+	if test -f autogen.sh ; then
+		./autogen.sh
+	fi
+fi
+
+if test -f configure ; then
+	if ! test -f config.h ; then
+		./configure ${configure_opts}
+	fi
+fi
+
+if test -f Makefile ; then
+	${make_clean}
+	make $CC CFLAGS="-D${appbn}_TRACE -ggdb3"
+fi
+
+if ! test -f ${app} ; then
+	echo "$app not found"
+	exit 1
+fi
 
 # ===========================================================================
 
