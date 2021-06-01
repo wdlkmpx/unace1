@@ -60,54 +60,49 @@ static int is_directory_traversal(char *str)
 
 /* gets file name from header
  */
-CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size, INT extract)
+void ace_fname (CHAR * out_s, thead * head, INT nopath, unsigned int size, INT extract)
 {
-   unsigned int i;
    char *cp = NULL;
-
-   i = (*(tfhead *) head).FNAME_SIZE;
-   if (i > (size - 1))
-     i = size - 1;
-   strncpy(s, (*(tfhead *) head).FNAME, i);
-   s[i] = 0;
+   unsigned int fnsize = (*(tfhead *) head).FNAME_SIZE;
+   unsigned int x = (fnsize >= size) ? (size-1) : fnsize;
+   strncpy (out_s, (*(tfhead *) head).FNAME, size-2);
+   out_s[x] = 0;
 
    if (extract)
    {
-      // '/': UNIX-specific atack
+      // '/': UNIX-specific attack
       //  - ACE32.EXE creates:
       //       man\man8\e2mmpstatus.8
       //  - tests/dirtraversal2.ace:
       //       /tmp/unace-dir-traversal
       //       ('/' must not be present in the string)
-     if (is_directory_traversal(s) || strchr(s,'/')) {
+     if (is_directory_traversal(out_s) || strchr(out_s,'/')) {
         f_err = ERR_WRITE;
-        *s = 0;
-        printf("\n    Directory traversal attempt:  %s\n", s);
-        return NULL;
+        printf("\n    Directory traversal attempt:  %s\n", out_s);
+        *out_s = 0;
+        return;
      }
    }
 
    if (nopath)
    {
-      cp=strrchr(s, '\\');
+      cp = strrchr(out_s, '\\');
       if (cp)
-         memmove(s, cp+1, strlen(cp));
+         memmove(out_s, cp+1, strlen(cp));
    }
 #if (DIRSEP!='\\')                  // replace msdos directory seperator
    else
    {                                // by current OS seperator
-      cp=s;
+      cp = out_s;
       while ((cp=strchr(cp, '\\'))!=NULL)
          *cp++=DIRSEP;
    }
 #endif
 
-   cp = s;
+   cp = out_s;
    while (*cp == '/') cp++;
-   if (cp != s)
-     memmove(s, cp, strlen(cp) + 1);
-
-   return s;
+   if (cp != out_s)
+     memmove(out_s, cp, strlen(cp) + 1);
 }
 
 static void mksubdirs (CHAR * f)        // checks/creates path of file

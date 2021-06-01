@@ -30,7 +30,7 @@ void dcpr_init_file(void);
 
 /* uac_crt.c - file creation */
 INT  wrask(const CHAR * s);
-CHAR *ace_fname(CHAR * s, thead * head, INT nopath, unsigned int size, INT extract);
+void ace_fname (CHAR * out_s, thead * head, INT nopath, unsigned int size, INT extract);
 FILE * create_dest_file (CHAR * file, INT a);
 
 #endif /* __uac_comm_h */
