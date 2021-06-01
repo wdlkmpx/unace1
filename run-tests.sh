@@ -8,6 +8,7 @@ TESTDIR="$HOME/.cache/unace1tests"
 mkdir -p "${TESTDIR}"
 
 app="$(pwd)/unace"
+appbn=$(basename $app)
 
 if ! test -f configure ; then
 	if test -f autogen.sh ; then
@@ -33,11 +34,22 @@ fi
 
 # ===========================================================================
 
+if test -z "$MD5SUM" ; then
+	if command -v md5sum 2>/dev/null ; then
+		MD5SUM='md5sum'
+	elif command -v gmd5sum 2>/dev/null ; then
+		MD5SUM='gmd5sum'
+	fi
+fi
+
 check_md5()
 {
+	if test -z "$MD5SUM" ; then
+		return
+	fi
 	md5file="$1"
 	logfile="$2"
-	if md5sum -c ${md5file} >${logfile} 2>&1 ; then
+	if ${MD5SUM} -c ${md5file} >${logfile} 2>&1 ; then
 		echo "OK"
 	else
 		ret=1
