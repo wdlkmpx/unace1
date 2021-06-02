@@ -1,35 +1,34 @@
-PROGRAM = unace
+# http://unlicense.org/
 
-OBJ = globals.o uac.o uac_crt.o uac_dcpr.o unace.o
-SRC = globals.c uac.c uac_crt.c uac_dcpr.c unace.c
+SUBDIRS = src
 
-#CFLAGS = -g -Wall -DMDEBUG
-#CFLAGS = -O3 -fno-strength-reduce -fomit-frame-pointer # These are for Linux
+all: subdirs
 
-CFLAGS = -O -g -Wall
-CC = cc
-
-all: $(PROGRAM)
-
-$(PROGRAM): $(OBJ) $(LIBS)
-	$(CC) $(CFLAGS) $(OBJ) -o $(PROGRAM) $(LIBS)
+subdirs:
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir; \
+	done
 
 clean:
-	rm -f *.o a.out core $(PROGRAM) *.exe
-	rm -f makefile.dep
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir clean; \
+	done
 
-makefile.dep: $(SRC)
-	$(CPP) $(CPPFLAGS) -MM $(SRC) >$@
+distclean:
+	rm -f Makefile config.h
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir distclean; \
+	done
 
-#======================================================================
-# make makefile.dep
-globals.o: globals.c acestruc.h declare.h pendian_detect.h unace.h
-uac.o: uac.c globals.h acestruc.h declare.h pendian_detect.h unace.h \
- uac.h
-uac_crt.o: uac_crt.c declare.h pendian_detect.h globals.h acestruc.h \
- unace.h uac.h
-uac_dcpr.o: uac_dcpr.c declare.h pendian_detect.h globals.h acestruc.h \
- unace.h uac.h
-unace.o: unace.c declare.h pendian_detect.h globals.h acestruc.h unace.h \
- uac.h
-#======================================================================
+install:
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir install; \
+	done
+
+uninstall:
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir uninstall; \
+	done
+
+
+.PHONY: subdirs $(SUBDIRS)

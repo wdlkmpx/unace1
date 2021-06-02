@@ -7,7 +7,7 @@ TESTDIR="$HOME/.cache/unace1tests"
 #KEEP_TESTS=1
 mkdir -p "${TESTDIR}"
 
-app="$(pwd)/unace"
+app="$(pwd)/src/unace"
 appbn=$(basename $app)
 
 # ===========================================================================
