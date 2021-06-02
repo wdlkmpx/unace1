@@ -1,16 +1,10 @@
-                                                      Copyright by Marcel Lemke
+Copyright by Marcel Lemke. GPL2
 
     Description of public UNACE v1.2b  January 2004
    -------------------------------------------------
 
-     1. Features
-     2. Platform compability
-     3. Compiling
-     4. Warranty
-     5. Thanks
-
-------------------------------------------------------------------------------
-
+The unace utility is used for extracting, testing and viewing the contents
+of archives created with the ACE archiver.
 
   1. Features
  -------------
@@ -23,7 +17,6 @@
         * no decryption
         * no wildcard-handling
 
-
   2. Platform compatibility
  ---------------------------
       Linux, Windows and probably other OS's
@@ -32,26 +25,8 @@
  --------------
       run 'make'
 
-  4. Warranty
- -------------
-      Marcel Lemke, the author of ACE and the original source of this
-      extraction utility, disclaims any liability for any damage caused by:
-
-        * using or misusing this software
-        * any bugs introduced by modifying source or due to the
-            compile/link environment
-
-      You use/distribute the compiled UNACE program at your own risk.
-      The original author (Marcel Lemke) cannot be held responsible for data
-      loss or other damages and any consequences from this loss or damages.
-
-
-  5. Thanks 
+  4. Thanks 
  -----------
       A lot of thanks to Wilfred van Velzen <wilfred@aobh.xs4all.nl> for
       porting UNACE to the Amiga and setting up the basic elements for
       general portability this way.
-
-
-                     Happy programming ... Marcel Lemke
-
