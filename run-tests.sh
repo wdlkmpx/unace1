@@ -20,12 +20,11 @@ if test -z "$MD5SUM" ; then
 	fi
 fi
 
-comp=
 for i in cc gcc clang
 do
-	comp=$(command -v $i 2>/dev/null)
-	if test -n "$comp" ; then
-		CC="CC=${comp}"
+	if command -v $i 2>/dev/null ; then
+		CC="CC=${i}"
+		break
 	fi
 done
 echo $CC
