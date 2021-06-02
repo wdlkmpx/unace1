@@ -1,13 +1,9 @@
 PROGRAM = unace
+CFLAGS = -O -g -Wall
+CC = cc
 
 OBJ = globals.o uac.o uac_crt.o uac_dcpr.o unace.o
 SRC = globals.c uac.c uac_crt.c uac_dcpr.c unace.c
-
-#CFLAGS = -g -Wall -DMDEBUG
-#CFLAGS = -O3 -fno-strength-reduce -fomit-frame-pointer # These are for Linux
-
-CFLAGS = -O -g -Wall
-CC = cc
 
 all: $(PROGRAM)
 
@@ -15,8 +11,7 @@ $(PROGRAM): $(OBJ) $(LIBS)
 	$(CC) $(CFLAGS) $(OBJ) -o $(PROGRAM) $(LIBS)
 
 clean:
-	rm -f *.o a.out core $(PROGRAM) *.exe
-	rm -f makefile.dep
+	rm -f *.o a.out core $(PROGRAM) *.exe makefile.dep
 
 makefile.dep: $(SRC)
 	$(CPP) $(CPPFLAGS) -MM $(SRC) >$@
