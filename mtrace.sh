@@ -12,7 +12,7 @@ fi
 
 #-------------------
 app="src/unace"
-app_args='x tests/zman.ace'
+app_args='x tests/zdir.ace'
 app_cleanup='rm -rf zman'
 #make_clean='make clean'
 configure_opts='--prefix=/usr'

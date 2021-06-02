@@ -141,21 +141,21 @@ else
 	echo "ERROR"
 fi
 
-printf "* tests/zman.ace: "
+printf "* tests/zdir.ace: "
 rm -rf zman
-${app} x -y ${MWD}/tests/zman.ace >${TESTDIR}/zman.log 2>&1
+${app} x -y ${MWD}/tests/zdir.ace >${TESTDIR}/zdir.log 2>&1
 if [ $? -eq 0 ] && [ $(find zman -type f | wc -l) -eq 20 ] ; then
-	check_md5 ${MWD}/tests/zman.md5 zman.log
+	check_md5 ${MWD}/tests/zdir.md5 zdir.log
 else
 	ret=1
 	echo "ERROR"
 fi
 
-printf "* tests/aclocal.ace: "
+printf "* tests/multivolume.ace: "
 rm -rf aclocal
-${app} x -y ${MWD}/tests/aclocal.ace >${TESTDIR}/aclocal.log 2>&1
+${app} x -y ${MWD}/tests/multivolume.ace >${TESTDIR}/multivolume.log 2>&1
 if [ $? -eq 0 ] && [ $(find aclocal -type f | wc -l) -eq 77 ] ; then
-	check_md5 ${MWD}/tests/aclocal.md5 aclocal.log
+	check_md5 ${MWD}/tests/multivolume.md5 multivolume.log
 else
 	ret=1
 	echo "ERROR"
