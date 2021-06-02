@@ -7,7 +7,7 @@ SRC = globals.c uac.c uac_crt.c uac_dcpr.c unace.c
 #CFLAGS = -O3 -fno-strength-reduce -fomit-frame-pointer # These are for Linux
 
 CFLAGS = -O -g -Wall
-CC = gcc
+CC = cc
 
 all: $(PROGRAM)
 

@@ -118,6 +118,14 @@ else
 	echo "ERROR"
 fi
 
+printf "* tests/out_of_bounds.ace: "
+${app} t ${MWD}/tests/out_of_bounds.ace >${TESTDIR}/out_of_bounds.log 2>&1
+if grep 'fault' ${TESTDIR}/out_of_bounds.log ; then
+	echo "ERROR"
+else
+	echo "OK"
+fi
+
 printf "* tests/onefile.ace: "
 rm -f CHANGES.LOG
 ${app} x -y ${MWD}/tests/onefile.ace >${TESTDIR}/onefile.log 2>&1
