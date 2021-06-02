@@ -49,7 +49,7 @@ check_md5()
 		# BSD
 		while read md5 file
 		do
-			if ! md5 -q -s "$md5" "$file" ; then
+			if ! md5 -q -s "$md5" "$file" >/dev/null 2>&1 ; then
 				ret=1
 				echo "ERROR"
 				return
