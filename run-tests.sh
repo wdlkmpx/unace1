@@ -17,19 +17,23 @@ if test -z "$MD5SUM" ; then
 		MD5SUM='md5sum'
 	elif command -v gmd5sum 2>/dev/null ; then
 		MD5SUM='gmd5sum'
+	elif command -v md5 2>/dev/null ; then
+		MD5SUM='md5'
 	fi
 fi
 
-for i in cc gcc clang
+compiler=
+for i in gcc clang cc
 do
 	if command -v $i 2>/dev/null ; then
+		compiler="${i}"
 		CC="CC=${i}"
 		break
 	fi
 done
 echo $CC
 
-if [ "${comp}" = "clang" ] ; then
+if [ "${compiler}" = "clang" ] ; then
 	sh --version # it might not be bash, need to know
 fi
 
@@ -40,14 +44,30 @@ check_md5()
 	fi
 	md5file="$1"
 	logfile="$2"
+
+	if [ "$MD5SUM" = "md5" ] ; then
+		# BSD
+		while read md5 file
+		do
+			if ! md5 -q -s "$md5" "$file" ; then
+				ret=1
+				echo "ERROR"
+				return
+			fi
+		done < ${md5file}
+		echo "OK"
+		return
+	fi
+
 	if ${MD5SUM} -c ${md5file} >${logfile} 2>&1 ; then
 		echo "OK"
 	else
 		ret=1
 		echo "ERROR"
 	fi
-
 }
+
+echo
 
 # ===========================================================================
 
