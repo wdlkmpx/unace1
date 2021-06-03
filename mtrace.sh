@@ -3,7 +3,7 @@
 #  For more information, please refer to <https://unlicense.org>
 
 if [ "$(uname -s)" != "Linux" ] ; then
-	echo "This only runs on Linux (requires gLibc"
+	echo "This only runs on Linux (requires the GNU C Library)"
 	exit
 else
 	echo "Info: this only works with the GNU C Library"

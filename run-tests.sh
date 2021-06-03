@@ -83,14 +83,19 @@ if test -f configure ; then
 	fi
 fi
 
-if test -f Makefile ; then
-	${make_clean}
-	make $CC CFLAGS="-D${appbn}_TRACE -ggdb3"
-fi
+if test -f ${app}.exe ; then
+	# .exe binary - cross compiled
+	app="wine ${app}"
+else
+	if test -f Makefile ; then
+		${make_clean}
+		make $CC CFLAGS="-D${appbn}_TRACE -ggdb3"
+	fi
 
-if ! test -f ${app} ; then
-	echo "$app not found"
-	exit 1
+	if ! test -f ${app} ; then
+		echo "$app not found"
+		exit 1
+	fi
 fi
 
 # ===========================================================================

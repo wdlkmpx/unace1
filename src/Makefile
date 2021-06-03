@@ -8,7 +8,7 @@ SRC = globals.c uac.c uac_crt.c uac_dcpr.c unace.c
 all: $(PROGRAM)
 
 $(PROGRAM): $(OBJ) $(LIBS)
-	$(CC) $(CFLAGS) $(OBJ) -o $(PROGRAM) $(LIBS)
+	$(CC) $(CFLAGS) $(OBJ) -o $(PROGRAM) $(LIBS) $(LDFLAGS)
 
 clean:
 	rm -f *.o a.out core $(PROGRAM) *.exe makefile.dep
