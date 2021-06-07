@@ -28,7 +28,7 @@ void dcpr_init(void);
 INT  dcpr_adds_blk(CHAR * buf, UINT len);
 void dcpr_init_file(void);
 
-/* uac_crt.c - file creation */
+/* file creation */
 INT  wrask(const CHAR * s);
 void ace_fname (CHAR * out_s, thead * head, INT nopath, unsigned int size, INT extract);
 FILE * create_dest_file (CHAR * file, INT a);
