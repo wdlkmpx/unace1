@@ -53,13 +53,14 @@ void comment_out(const CHAR *top)      // outputs comment if present
 /*                  CRC-calculation                        */
 // ==========================================================
 
-ULONG crctable[256];
+#define CRCPOLY  0xEDB88320L
+static ULONG crctable[256];
 ULONG rd_crc=0;
 
 void make_crctable(void)   // initializes CRC table
 {
    ULONG r, i, j;
-   for (i = 0; i <= 255; i++)
+   for (i = 0; i < 256; i++)
    {
       for (r = i, j = 8; j; j--)
          r = (r & 1) ? (r >> 1) ^ CRCPOLY : (r >> 1);

@@ -17,6 +17,10 @@
 #include "globals.h"
 #include "uac.h"
 
+static INT calc_dectabs(void);
+static INT read_wd(UINT maxwd, USHORT * code, UCHAR * wd, INT max_el);
+
+
 static void memset16(USHORT * dest, SHORT val, INT len)  // fills short-array with
 {                                                 // value
    while (len--)
@@ -331,7 +335,7 @@ INT  makecode(UINT maxwd, UINT size1_t, UCHAR * wd, USHORT * code)
    return (1);
 }
 
-INT  read_wd(UINT maxwd, USHORT * code, UCHAR * wd, INT max_el)
+static INT  read_wd(UINT maxwd, USHORT * code, UCHAR * wd, INT max_el)
 {
    UINT c,
         i,
@@ -387,7 +391,7 @@ INT  read_wd(UINT maxwd, USHORT * code, UCHAR * wd, INT max_el)
 
 }
 
-INT  calc_dectabs(void)
+static INT  calc_dectabs(void)
 {
    if (!read_wd(maxwd_mn, dcpr_code_mn, dcpr_wd_mn, max_cd_mn)
        || !read_wd(maxwd_lg, dcpr_code_lg, dcpr_wd_lg, max_cd_lg))

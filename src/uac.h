@@ -14,16 +14,12 @@ void comment_out(const CHAR *top);
 
 /* crc */
 #define CRC_MASK 0xFFFFFFFFL
-#define CRCPOLY  0xEDB88320L
-extern ULONG crctable[256];
 extern ULONG rd_crc;
 ULONG getcrc(ULONG crc, UCHAR * addr, INT len);
 void  make_crctable(void);
 
 /* uac_dcpr.c - decompression */
-INT  calc_dectabs(void);
 void dcpr_comm(INT comm_size);
-INT  read_wd(UINT maxwd, USHORT * code, UCHAR * wd, INT max_el);
 void dcpr_init(void);
 INT  dcpr_adds_blk(CHAR * buf, UINT len);
 void dcpr_init_file(void);
