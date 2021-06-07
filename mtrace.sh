@@ -15,10 +15,10 @@ app_args='x tests/zdir.ace'
 app_cleanup='rm -rf zman'
 #make_clean='make clean'
 configure_opts='--prefix=/usr'
-export CFLAGS="-D${appbn}_TRACE -ggdb3"
 #-------------------
 
 appbn=$(basename $app)
+export CFLAGS="-D${appbn}_TRACE -ggdb3"
 #if defined(appbn_TRACE) && defined(__GLIBC__)
 #include <mcheck.h>
 #endif
@@ -44,9 +44,7 @@ if ! test -f configure ; then
 fi
 
 if test -f configure ; then
-	if ! test -f config.h ; then
-		./configure ${configure_opts}
-	fi
+	./configure ${configure_opts}
 fi
 
 if test -f Makefile ; then
