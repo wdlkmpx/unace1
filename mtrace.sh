@@ -10,7 +10,7 @@ else
 fi
 
 #-------------------
-app="src/unace"
+app="src/unace1"
 app_args='x tests/zdir.ace'
 app_cleanup='rm -rf zman'
 #make_clean='make clean'

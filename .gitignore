@@ -1,6 +1,9 @@
 *.o
 mtrace*.txt
 unace
+unace.exe
+unace1
+unace1.exe
 makefile.dep
 Makefile
 config.h

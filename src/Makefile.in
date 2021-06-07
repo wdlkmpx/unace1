@@ -1,5 +1,5 @@
 
-APP  = unace
+APP  = unace1
 # ls *.c | sed 's%\.c%.o%g'
 OBJS = globals.o uac.o uac_dcpr.o unace.o
 

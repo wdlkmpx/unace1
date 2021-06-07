@@ -7,7 +7,7 @@ TESTDIR="$HOME/.cache/unace1tests"
 #KEEP_TESTS=1
 mkdir -p "${TESTDIR}"
 
-app="$(pwd)/src/unace"
+app="$(pwd)/src/unace1"
 appbn=$(basename $app)
 export CFLAGS="-D${appbn}_TRACE -ggdb3"
 

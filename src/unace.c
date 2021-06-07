@@ -8,7 +8,7 @@
 
 #include "declare.h"
 
-#if defined(unace_TRACE) && defined(__GLIBC__)
+#if defined(unace1_TRACE) && defined(__GLIBC__)
 #include <mcheck.h>
 #endif
 
@@ -475,7 +475,7 @@ void showhelp(void)
 int main(INT argc, CHAR * argv[])              // processes the archive
 {
 
-#if defined(unace_TRACE) && defined(__GLIBC__)
+#if defined(unace1_TRACE) && defined(__GLIBC__)
    mtrace();
 #endif
 
