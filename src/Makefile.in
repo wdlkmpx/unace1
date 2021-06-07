@@ -3,6 +3,8 @@ APP  = unace
 # ls *.c | sed 's%\.c%.o%g'
 OBJS = globals.o uac.o uac_crt.o uac_dcpr.o unace.o
 
+CPPFLAGS += -I..
+
 all: $(APP)
 
 $(APP): $(OBJS)

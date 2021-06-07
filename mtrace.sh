@@ -6,8 +6,7 @@ if [ "$(uname -s)" != "Linux" ] ; then
 	echo "This only runs on Linux (requires the GNU C Library)"
 	exit
 else
-	echo "Info: this only works with the GNU C Library"
-	echo
+	echo -e "\nInfo: this only works with the GNU C Library\n"
 fi
 
 #-------------------
@@ -16,6 +15,7 @@ app_args='x tests/zdir.ace'
 app_cleanup='rm -rf zman'
 #make_clean='make clean'
 configure_opts='--prefix=/usr'
+export CFLAGS="-D${appbn}_TRACE -ggdb3"
 #-------------------
 
 appbn=$(basename $app)
@@ -51,7 +51,7 @@ fi
 
 if test -f Makefile ; then
 	${make_clean}
-	make CFLAGS="-D${appbn}_TRACE -ggdb3"
+	make
 fi
 
 if ! test -f ${app} ; then
@@ -59,7 +59,7 @@ if ! test -f ${app} ; then
 	exit 1
 fi
 
-${app} ${app_args} #onefile.ace
+${app} ${app_args}
 ${app_cleanup}
 
 mtrace ${app} mtrace.txt > mtrace-out.txt;

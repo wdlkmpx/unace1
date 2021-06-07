@@ -9,6 +9,7 @@ mkdir -p "${TESTDIR}"
 
 app="$(pwd)/src/unace"
 appbn=$(basename $app)
+export CFLAGS="-D${appbn}_TRACE -ggdb3"
 
 # ===========================================================================
 
@@ -20,21 +21,6 @@ if test -z "$MD5SUM" ; then
 	elif command -v md5 2>/dev/null ; then
 		MD5SUM='md5'
 	fi
-fi
-
-compiler=
-for i in gcc clang cc
-do
-	if command -v $i 2>/dev/null ; then
-		compiler="${i}"
-		CC="CC=${i}"
-		break
-	fi
-done
-echo $CC
-
-if [ "${compiler}" = "clang" ] ; then
-	sh --version # it might not be bash, need to know
 fi
 
 check_md5()
@@ -86,10 +72,12 @@ fi
 if test -f ${app}.exe ; then
 	# .exe binary - cross compiled
 	app="wine ${app}"
+elif test -f ${app} ; then
+	app="${app}"
 else
 	if test -f Makefile ; then
 		${make_clean}
-		make $CC CFLAGS="-D${appbn}_TRACE -ggdb3"
+		make
 	fi
 
 	if ! test -f ${app} ; then
