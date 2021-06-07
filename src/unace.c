@@ -277,15 +277,18 @@ INT  open_archive(INT print_err)        // opens archive (or volume)
    return 1;
 }
 
-void get_next_volname(void)             // get file name of next volume
-{
-   CHAR *cp, *c = NULL;
-   INT  num;
 
-   if ((cp = (CHAR *) strrchr(aname, '.')) == NULL || !*(cp + 1))
+INT  proc_next_vol(void)        // opens next volume to process
+{
+   fclose (archive_fp);               // close handle
+
+   // get file name of next volume
+   CHAR *cp = strrchr (aname, '.');
+   CHAR *c  = NULL;
+   INT  num;
+   if (cp == NULL || !*(cp + 1)) {
       num = -1;
-   else
-   {
+   } else {
       cp++;
       num = (*(cp + 1) - '0') * 10 + *(cp + 2) - '0';
       if (!in(num, 0, 99))
@@ -294,7 +297,6 @@ void get_next_volname(void)             // get file name of next volume
          num += (*cp - '0') * 100;
    }
    num++;
-
    if (num < 100) {
       *cp = 'C';
       c = cp;
@@ -303,16 +305,10 @@ void get_next_volname(void)             // get file name of next volume
    }
    *(cp + 1) = (num / 10) % 10 + '0';
    *(cp + 2) = num % 10 + '0';
-   // UNIX: C00 & c00 are different strings
+   /* UNIX: C00 & c00 are different strings */
    if (c && !fileexists (aname)) {
       *c = 'c';
    }
-}
-
-INT  proc_next_vol(void)        // opens next volume to process
-{
-   fclose (archive_fp);               // close handle
-   get_next_volname();          // get file name of next volume
 
    // try to open volume, read archive header
    if (!open_archive (1)) {
@@ -328,6 +324,7 @@ INT  proc_next_vol(void)        // opens next volume to process
    }
    return 1;
 }
+
 
 INT  read_adds_blk(CHAR * buffer, INT len)      // reads part of ADD_SIZE block
 {
