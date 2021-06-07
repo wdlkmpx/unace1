@@ -309,24 +309,18 @@ void get_next_volname(void)             // get file name of next volume
    }
 }
 
-INT  proc_vol(void) // open volume
-{
-   if (!open_archive(1)) {
-      printf("\nError while opening archive. File not found or archive broken.\n");
-      f_err = ERR_OPEN;
-      return 0;
-   }
-
-   return 1;
-}
-
 INT  proc_next_vol(void)        // opens next volume to process
 {
    fclose (archive_fp);               // close handle
    get_next_volname();          // get file name of next volume
 
-   if (!proc_vol())             // try to open volume, read archive header
+   // try to open volume, read archive header
+   if (!open_archive (1)) {
+      printf("\nError while opening archive. File not found or archive broken.\n");
+      f_err = ERR_OPEN;
       return 0;
+   }
+
    if (!read_header(1))         // read 2nd header
    {
       f_err=ERR_READ;
