@@ -179,15 +179,6 @@ static void mksubdirs (CHAR * f)        // checks/creates path of file
    }
 }
 
-INT  ovr_delete(CHAR * n)           // deletes directory or file
-{
-   if (remove(n) && rmdir(n))
-   {
-      printf("\n    Could not delete file or directory. Access denied.\n");
-      return (1);
-   }
-   return (0);
-}
 
 FILE * create_dest_file (CHAR * file, INT a)  // creates file or directory
 {
@@ -221,14 +212,18 @@ FILE * create_dest_file (CHAR * file, INT a)  // creates file or directory
             if (i == 3)
                f_err = ERR_USER;
          }
-         if ((i && !f_ovrall) || ovr_delete(file))
-            return (NULL);            // delete?
+         if (i && !f_ovrall) {
+            return NULL;
+         } else if (remove(file) != 0) {
+            printf("\n    Could not delete file or directory. Access denied.\n");
+            return NULL;
+         }
       }
       han = fopen (file, "wb");
       if (!han) {
          printf("\n    Could not create destination file.\n");
       }
-      return (han);
+      return han;
    }
 }
 
