@@ -2,3 +2,5 @@
 mtrace*.txt
 unace
 makefile.dep
+Makefile
+config.h

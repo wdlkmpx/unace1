@@ -4,6 +4,8 @@ MAKEFLAGS += --no-print-directory
 
 SUBDIRS = src
 
+DISTCLEAN_FILES = Makefile config.h
+
 all: subdirs
 
 subdirs:
@@ -17,7 +19,7 @@ clean:
 	done
 
 distclean:
-#	rm -f Makefile config.h
+	rm -f $(DISTCLEAN_FILES)
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir distclean; \
 	done

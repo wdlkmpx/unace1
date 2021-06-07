@@ -1,0 +1,26 @@
+
+APP  = unace
+# ls *.c | sed 's%\.c%.o%g'
+OBJS = globals.o uac.o uac_crt.o uac_dcpr.o unace.o
+
+all: $(APP)
+
+$(APP): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(APP) $(LIBS) $(LDFLAGS)
+
+strip: $(APP)
+	$(STRIP) $(APP)
+
+distclean: clean
+	rm -f Makefile
+
+clean:
+	rm -f *.o *~ $(APP) $(APP).exe
+
+install: $(APP)
+	mkdir -p $(DESTDIR)$(bindir)
+	install $(APP) $(DESTDIR)$(bindir)
+
+uninstall:
+	rm -f $(DESTDIR)$(bindir)/$(APP)
+
