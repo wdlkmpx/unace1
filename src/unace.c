@@ -43,44 +43,6 @@ static void my_signalhandler(INT sig_number)     // sets f_err if ctrl+c or ctrl
    printf("\nUser break\n");
 }
 
-
-#ifdef CASEINSENSE
-
-#include <ctype.h>
-
-/* fileexists() hack:
- * if first try of file existing doesn't work then swap Case of the c
- * in the .CXX extension
- */
-INT fileexists_insense(char *name)
-{
-  int len;
-  char *s;
-
-  if (fileexists(name))
-    return 1;
-
-  len = strlen(name);
-  if (len >= 3)
-  {
-    s = &name[len-3];
-    if (isalpha(*s))
-    {
-      if (islower(*s))
-        *s = toupper(*s);
-      else
-        *s = tolower(*s);
-      return fileexists(name);
-    }
-  }
-  return 0;
-}
-
-#else
-  #define fileexists_insense(name) fileexists(name)
-#endif
-
-
 void init_unace(void)           // initializes unace
 {
    buf_rd = (ULONG*) malloc(size_rdb * sizeof(ULONG));  // Allocate buffers: increase
