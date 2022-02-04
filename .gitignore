@@ -5,5 +5,5 @@ unace.exe
 unace1
 unace1.exe
 makefile.dep
-Makefile
 config.h
+config.mk

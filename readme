@@ -23,7 +23,8 @@ of archives created with the ACE archiver.
 
   3. Compiling
  --------------
-      run 'make'
+      ./configure [options - see ./configure --help]
+      make
 
   4. Thanks 
  -----------
