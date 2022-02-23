@@ -42,21 +42,37 @@ PACKAGE_VERSION="${VERSION}"
 # ./configure release [xz|gz|lz|bz2|zst]
 
 if [ "$1" = "release" ] ; then
-	if command -v git >/dev/null; then
-		printf "Run 'git clean -dfx'? [y/N]: "
-		read anzwer
-		case $anzwer in y|Y)
-			echo '# git clean -dfx'
-			git clean -dfx ;;
-		esac
-	fi
-	dir=${PACKAGE}-${VERSION}
-	rm -rf ../${dir}
-	mkdir -p ../${dir}
-	cp -rf $(pwd)/* ../${dir}
+	srcdir=$(pwd)
+	outdir=${PACKAGE}-${VERSION}
 	cd ..
-	echo "# tar -vcf ${dir}.tar $dir"
-	tar -vcf ${dir}.tar $dir
+	rm -rf ${outdir}
+	if [ "$2" = "dist" ] ; then
+		# force creation of tarfile, copy the whole dir
+		shift
+		shift
+		cp -rf ${srcdir} ${outdir}
+		cd ${outdir}
+		git clean -dfx
+		rm -rf .*
+		cd ..
+	else
+		if command -v git >/dev/null; then
+			printf "Run 'git clean -dfx'? [y/N]: "
+			read anzwer
+			case $anzwer in y|Y)
+				cd ${srcdir}
+				echo '# git clean -dfx'
+				git clean -dfx
+				cd ..
+				;;
+			esac
+		fi
+		mkdir -p ${outdir}
+		cp -rf ${srcdir}/* ${outdir}/
+	fi
+	#--
+	echo "# tar -vcf ${outdir}.tar ${outdir}"
+	tar -vcf ${outdir}.tar ${outdir}
 	comp=$2
 	if [ -z "$comp" ] ; then
 		comp=xz
@@ -68,16 +84,16 @@ if [ "$1" = "release" ] ; then
 		zst) cmd=zstd    ;;
 		*)   cmd=${comp} ;;
 	esac
-	rm -f ${dir}.tar.${comp}
-	echo "# ${cmd} ${dir}.tar"
-	if ${cmd} ${dir}.tar ; then
-		echo "*** ${dir}.tar.${comp} has been created..."
+	rm -f ${outdir}.tar.${comp}
+	echo "# ${cmd} ${outdir}.tar"
+	if ${cmd} ${outdir}.tar ; then
+		echo "*** ${outdir}.tar.${comp} has been created..."
 	fi
-	rm -f ${dir}.tar
+	rm -f ${outdir}.tar
 	exit
 fi
 
-# w_conf/gettext: ./configure po|pot|po2c
+# w_conf/gettext: ./configure po|pot
 
 #==========================================================
 

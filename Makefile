@@ -37,5 +37,14 @@ install-strip:
 uninstall:
 	@sh $(WSCRIPT) uninstall $(SUBDIRS)
 
+check:
+
+distcheck:
+
+installcheck:
+
+dist:
+	sh configure release dist
+
 .PHONY: subdirs $(SUBDIRS)
 
