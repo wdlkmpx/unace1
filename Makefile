@@ -1,6 +1,5 @@
-# http://unlicense.org/
 
-SUBDIRS = src
+SUBDIRS = src 
 
 DISTCLEAN_FILES = 
 
@@ -8,9 +7,9 @@ DISTCLEAN_FILES =
 
 include config.mk
 
-DISTCLEAN_FILES += config.h config.mk config.log
+DISTCLEAN_FILES += config.h config.mk config.log config.sh
 
-WSCRIPT = wconfig/_exec_make_dir.sh $(MAKE)
+WSCRIPT = w_conf/_exec_make_dir.sh $(MAKE)
 
 MAKEFLAGS += --no-print-directory
 
@@ -39,3 +38,4 @@ uninstall:
 	@sh $(WSCRIPT) uninstall $(SUBDIRS)
 
 .PHONY: subdirs $(SUBDIRS)
+

@@ -6,7 +6,8 @@ APP  = unace1
 OBJS = globals.o uac.o uac_dcpr.o unace.o
 SRCS = globals.c uac.c uac_dcpr.c unace.c
 
-CPPFLAGS += -I..
+#CPPFLAGS += -I..
+CFLAGS += -I..
 
 all: $(APP)
 

@@ -7,3 +7,5 @@ unace1.exe
 makefile.dep
 config.h
 config.mk
+config.log
+config.sh

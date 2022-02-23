@@ -13,7 +13,7 @@ pwd=$(pwd)
 
 for dir in ${@}
 do
-	echo "make: Entering directory '${pwd}/${dir}'"
+	echo "${make}: Entering directory '${pwd}/${dir}'"
 	if ! [ -e "$dir" ] ; then
 		echo "ERROR: '$dir' directory does not exist"
 		exit 1
@@ -22,12 +22,14 @@ do
 		echo "ERROR: '$dir' is not a directory"
 		exit 1
 	fi
+	#--
 	cd "$dir"
 	if ! ${make} ${target} ; then
 		exit 1
 	fi
+	#--
 	cd "${pwd}"
-	echo "make: Leaving directory '${pwd}/${dir}'"
+	echo "${make}: Leaving directory '${pwd}/${dir}'"
 done
 
 exit 0

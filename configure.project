@@ -4,3 +4,9 @@ PACKAGE="unace"
 VERSION="1.2b"
 PACKAGE_URL=''
 
+PROJECT_TYPE=C
+
+w_main_func()
+{
+	printf ""
+}
