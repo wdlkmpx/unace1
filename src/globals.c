@@ -14,7 +14,7 @@
 const char *acesign = "**ACE**";
 
 //-------- Version string for program
-const char *version="UNACE v1.2    public version\n";
+const char *version="UNACE v1.3b    public version\n";
 
 //-------- header buffer and pointers
 thead head;

@@ -21,6 +21,7 @@ extra_configure_opts=''
 config_h_have=
 config_mk_flags=
 w_files_in=
+sysroot=
 
 if [ -f configure.project ] ; then
 	. ./configure.project
@@ -275,14 +276,7 @@ w_compile_c_code() # $1:code  $2:extra-CFLAGS  $3:extra-LDFLAGS
 	if [ -z "$1" ] ; then
 		exit_error 'w_compile: code to compile is an empty string'
 	fi
-	if [ -n "$W_USE_MKTEMP" ] ; then
-		conftest=$(mktemp -u .wxconftestXXXXXXXXX)
-		if [ -z "$conftest" ] ; then
-			conftest=.wxconftest$$
-		fi
-	else
-		conftest=.wxconftest$$
-	fi
+	conftest=.wxconftest$$
 	printf "$1" > ${conftest}.c
 	printf "\n$1" >> config.log
 	echo "$CC $CFLAGS $2 ${conftest}.c -o ${conftest}.o $LDFLAGS $3" >>config.log
@@ -541,8 +535,9 @@ Optional Features:
 $(print_optional_features)
 Optional Packages:
   (Use --without-PACKAGE or --with-PACKAGE[=ARG] )
-  --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
-                          compiler's sysroot if not specified).
+  --with-sysroot[=DIR]    Set DIR as the compiler's sysroot directory
+                          for headers and libraries
+
 $(print_optional_packages)
 Some influential environment variables:
   CC          C compiler command
@@ -736,8 +731,7 @@ if [ -n "${sysroot}" ] ; then
 	fi
 	CC="$CC --sysroot=${sysroot}"
 	CXX="$CXX --sysroot=${sysroot}"
-	#--
-	if [ -n "$W_SYSROOT_PLUS_INCLUDES_AND_LIBS" ] ; then
+	if [ -n "$W_SYSROOT_EXTRA" ] ; then
 		if [ -d ${sysroot}/include ] ; then
 			CFLAGS="-I${sysroot}/include $CFLAGS"
 			CXXFLAGS="-I${sysroot}/include $CXXFLAGS"

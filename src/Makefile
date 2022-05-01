@@ -15,7 +15,13 @@ $(APP): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(APP) $(LDFLAGS) $(LIBS)
 
 strip: $(APP)
-	$(STRIP) $(APP)
+	@if test -f $(APP).exe ; then \
+		echo $(STRIP) $(APP).exe; \
+		$(STRIP) $(APP).exe; \
+	else \
+		echo $(STRIP) $(APP); \
+		$(STRIP) $(APP); \
+	fi;
 
 distclean: clean
 
