@@ -206,12 +206,14 @@ FILE * create_dest_file (CHAR * file, INT a)  // creates file or directory
    {
       if (ex)
       {                             // does the file already exist
+         if (f_ovrnvr) return NULL;
          if (!f_ovrall)
          {
             i = wrask("Overwrite existing file?");  // prompt for overwrite
             f_ovrall = (i == 1);
             if (i == 3)
                f_err = ERR_USER;
+               return NULL;
          }
          if (i && !f_ovrall) {
             return NULL;

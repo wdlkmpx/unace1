@@ -378,7 +378,7 @@ void extract_files(int nopath, int test)
             if (test || 
                 (outfile_fp = create_dest_file(file, (INT) fhead.ATTR)) == NULL)
             {
-               if (test || adat.sol)
+               if ((test || adat.sol) && (f_err != ERR_USER))
                   analyze_file();        // analyze file
             }
             else
@@ -468,6 +468,10 @@ void showhelp(void)
           "And <switches> is zero or more of:\n"
           "\n"
           " -y   Assume 'yes' on all questions, never ask for input"
+          "\n"
+          " -o   Overwrite existing file(s)"
+          "\n"
+          " -n   Never overwrite existing file(s)"
         );
    f_err = ERR_CLINE;
 }
@@ -493,7 +497,13 @@ int main(INT argc, CHAR * argv[])              // processes the archive
       switch (tolower(argv[arg_cnt][1]))
       {
          case 'y':
-            f_ovrall    = 1;      // Overwrite all
+            f_ovrall    = 1;    // Overwrite all
+            break;
+         case 'o':
+            f_ovrall    = 1;    // Overwrite all
+            break;
+         case 'n':
+            f_ovrnvr    = 1;    // Never Overwrite
             break;
          default:
             show_help = 1;
@@ -532,7 +542,7 @@ int main(INT argc, CHAR * argv[])              // processes the archive
             }
 
          fclose (archive_fp);
-         if (f_err)
+         if (f_err && (f_err != ERR_USER))
          {
             printf("\nError occurred\n");
             if (f_criterr)

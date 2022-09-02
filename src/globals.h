@@ -77,6 +77,7 @@ extern
 INT  f_err      ,
      f_err_crc  ,
      f_ovrall   ,
+     f_ovrnvr   ,
      f_curpas   ,
      f_criterr  ;
 

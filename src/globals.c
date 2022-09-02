@@ -14,7 +14,7 @@
 const char *acesign = "**ACE**";
 
 //-------- Version string for program
-const char *version="UNACE v1.3b    public version\n";
+const char *version="UNACE v1.4b    public version\n";
 
 //-------- header buffer and pointers
 thead head;
@@ -69,6 +69,7 @@ struct tadat adat;
 INT  f_err      =0,
      f_err_crc  =0,
      f_ovrall   =0,
+     f_ovrnvr   =0;
      f_curpas   =0,
      f_criterr  =0;
 
