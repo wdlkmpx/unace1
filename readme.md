@@ -1,8 +1,3 @@
-## THE END
-
-See unace v2
-- https://github.com/wdlkmpx/unace
-
 ## UNACE 1
 
 Copyright by Marcel Lemke. GPL2
@@ -12,7 +7,7 @@ of archives created with the ACE archiver.
 
 ## Features
 
-  The public version of UNACE is limited in its functionallity:
+  The public version of UNACE 1 is limited in its functionallity:
   * no v2.0 decompression
   * no EMS/XMS support
   * decompression dictionary limited by the target system;
@@ -22,15 +17,9 @@ of archives created with the ACE archiver.
 
 ## Platform compatibility
 
-   Linux, Windows and probably other OS's
+   Linux, Windows, FreeBSD, and probably other OS's
 
 ## Compiling
 
   - ./configure [options - see ./configure --help]
   - make
-
-## Thanks 
-
-   A lot of thanks to Wilfred van Velzen <wilfred@aobh.xs4all.nl> for
-   porting UNACE to the Amiga and setting up the basic elements for
-   general portability this way.
