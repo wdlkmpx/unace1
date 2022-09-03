@@ -211,11 +211,13 @@ FILE * create_dest_file (CHAR * file, INT a)  // creates file or directory
          {
             i = wrask("Overwrite existing file?");  // prompt for overwrite
             f_ovrall = (i == 1);
-            if (i == 3)
+            if (i == 3) {
                f_err = ERR_USER;
                return NULL;
+            }
          }
-         if (i && !f_ovrall) {
+         // i: 0=yes 1=all
+         if (i > 1 && !f_ovrall) {
             return NULL;
          } else if (remove(file) != 0) {
             printf("\n    Could not delete file or directory. Access denied.\n");
