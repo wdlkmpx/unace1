@@ -28,9 +28,15 @@ distclean: clean
 clean:
 	rm -f *.o *~ $(APP) $(APP).exe
 
-install: $(APP)
+install: all
 	mkdir -p $(DESTDIR)$(bindir)
-	install $(APP) $(DESTDIR)$(bindir)
+	@if test -f $(APP).exe ; then \
+		echo install $(APP).exe; \
+		install $(APP).exe $(DESTDIR)$(bindir); \
+	else \
+		echo install $(APP); \
+		install $(APP) $(DESTDIR)$(bindir); \
+	fi;
 
 install-strip: strip install
 

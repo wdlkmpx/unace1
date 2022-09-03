@@ -1,12 +1,55 @@
 #!/bin/sh
 
+# Project name and version
 PACKAGE="unace"
 VERSION="1.3b"
 PACKAGE_URL=''
 
+# Flags that will be used in all makefiles that compile code...
+PROJECT_CFLAGS='-Wall -g -O2' # -Wextra -Wno-unused-parameter -Wno-missing-field-initializers
+PROJECT_CXXFLAGS="${PROJECT_CFLAGS}"
+PROJECT_CPPFLAGS=''
+PROJECT_LDFLAGS=''
+PROJECT_LXXFLAGS=''
+PROJECT_LIBS=''
+
+# Project type, use C to avoid checking for C++ compiler and stuff
+# supported values: C, C++ ("" = C++)
 PROJECT_TYPE=C
 
+# Files.in, to replace @VERSION@ and a few other variables
+#  see w_conf/00_standard_infile.sh for a complete list
+#w_infiles='lib/libmp3.pc'
+
+# config.h: custom extra lines
+w_config_h_extra_lines=""
+
+# config.mk: custom extra lines
+w_config_mk_extra_lines=""
+
+#w_new_option <OPT>
+#  Manually create the following funcs:
+#   opt_print_<OPT>()     { }
+#   opt_configure_<OPT>() { }
+#   opt_check_<OPT>()     { }
+
+
+# configure the project using the commands provided
+# by `configure` and other scripts and commands/tools
 w_main_func()
 {
-	printf ""
+	# GCC=yes if gcc has been detected
+
+	# if the Makefiles are only compatible with GNU make, use w_require_gnu_make
+	#w_prefer_gnu_make
+
+	# check required headers and exit on error
+	w_check_headers_required stdio.h
 }
+
+# once everything is done, you can fix things, etc
+w_finish_func()
+{
+    printf ""
+}
+
