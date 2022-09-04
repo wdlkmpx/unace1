@@ -20,8 +20,8 @@ uname -a
 
 export CFLAGS="-DDEBUG_W_ENDIAN"
 
-./configure && make && make install
-#./rebuild.sh autotools && ./run-tests.sh
+#./configure && make && make install
+./run-tests.sh
 exit_code=$?
 
 for i in config.h config.log config.mk
