@@ -124,6 +124,12 @@ rm -f CHANGES.LOG
 ${app} x -y ${MWD}/tests/onefile.ace >${TESTDIR}/onefile.log 2>&1
 check_md5 ${MWD}/tests/onefile.md5 onefile.log
 
+## unace1 doesn't support password protected archives
+#printf "* tests/passwd.ace: "
+#rm -f passwd.m4
+#${app} x -y -p1234 ${MWD}/tests/passwd.ace >${TESTDIR}/passwd.log 2>&1
+#check_md5 ${MWD}/tests/passwd.md5 passwd.log
+
 printf "* tests/ZGFX2.ace: "
 rm -rf ZGFX2
 ${app} x -y ${MWD}/tests/ZGFX2.ace >${TESTDIR}/ZGFX2.log 2>&1

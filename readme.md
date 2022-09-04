@@ -10,8 +10,7 @@ of archives created with the ACE archiver.
   The public version of UNACE 1 is limited in its functionallity:
   * no v2.0 decompression
   * no EMS/XMS support
-  * decompression dictionary limited by the target system;
-    this means that the 16bit version has a maximum of 32k only
+  * decompression dictionary limited by the target system
   * no decryption
   * no wildcard-handling
 
