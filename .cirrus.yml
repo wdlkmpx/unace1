@@ -10,9 +10,9 @@ freebsd_task:
     cpu: 1
     memory: 1GB
 #  install_script:
-#    - .github/cirrus-ci.sh freebsd
+#    - ./scripts/test_ci.sh freebsd
   build_script:
-    - .github/cirrus-ci.sh
+    - ./scripts/test_ci.sh
 #  test_script:
 #    - ...
 
@@ -26,19 +26,41 @@ macos_task:
     cpu: 1
     memory: 1GB
 #  install_script:
-#    - .github/cirrus-ci.sh macos
+#    - ./scripts/test_ci.sh macos
   build_script:
-    - .github/cirrus-ci.sh
+    - ./scripts/test_ci.sh
 
 ##https://github.com/dfandrich/gpscorrelate/blob/36dcd86a055999a89b23400b73356d5c34b170c4/.cirrus.yml
 
-linux_musl_task:
-  name: Alpine Linux 3.17
+#alpine_3_15_task:
+#  name: Alpine Linux 3.15
+#  container:
+#    image: alpine:3.15
+#    cpu: 1
+#    memory: 1GB
+#  install_script:
+#    - apk add --no-cache build-base
+#  build_script:
+#    - ./scripts/test_ci.sh
+
+alpine_3_16_task:
+  name: Alpine Linux 3.16
   container:
-    image: alpine:3.17
+    image: alpine:3.16
     cpu: 1
     memory: 1GB
-  pkginstall_script:
-    - apk add --no-cache build-base zlib-dev
+  install_script:
+    - apk add --no-cache build-base
   build_script:
-    - .github/cirrus-ci.sh
+    - ./scripts/test_ci.sh
+
+#alpine_3_17_task:
+#  name: Alpine Linux 3.17
+#  container:
+#    image: alpine:3.17
+#    cpu: 1
+#    memory: 1GB
+#  install_script:
+#    - apk add --no-cache build-base
+#  build_script:
+#    - ./scripts/test_ci.sh

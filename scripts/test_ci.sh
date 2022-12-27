@@ -54,6 +54,5 @@ export CFLAGS="-DDEBUG_W_ENDIAN"
 cmdecho ./configure  || exit_error
 cmdecho make         || exit_error
 cmdecho make check   || exit_error
-cmdecho make install || exit_error
+#cmdecho make install || exit_error
 
-exit 0

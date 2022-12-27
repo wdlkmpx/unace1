@@ -110,6 +110,17 @@ else
 	fi
 fi
 
+# basic check
+expected_ret=8
+${app} -h >/dev/null
+iret=$?
+if [ ${iret} -ne ${expected_ret} ] ; then
+    echo "Something is wrong with $app"
+    echo "Got code $iret (expected ${expected_ret})"
+    echo "Aborted"
+    exit
+fi
+
 # ===========================================================================
 
 cmdecho()
