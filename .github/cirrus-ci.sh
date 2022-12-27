@@ -16,25 +16,44 @@ fi
 
 # ============================================
 
-uname -a
+cmdecho()
+{
+    echo "---------------------"
+    echo "# $@"
+    echo "---------------------"
+    "$@"
+}
 
-export CFLAGS="-DDEBUG_W_ENDIAN"
 
-./configure  || exit 1
-make         || exit 1
-make check   || exit 1
-make install || exit 1
-
-exit 0
-
-for i in config.h config.log config.mk
-do
-    echo "
+print_config_log()
+{
+    for i in config.h config.log config.mk
+    do
+        echo "
 ===============================
 	$i
 ===============================
 "
-    cat ${i}
-done
+        cat ${i}
+    done
+}
 
-exit ${exit_code}
+
+exit_error()
+{
+    print_config_log
+    exit 1
+}
+
+# ============================================
+
+uname -a
+
+export CFLAGS="-DDEBUG_W_ENDIAN"
+
+cmdecho ./configure  || exit_error
+cmdecho make         || exit_error
+cmdecho make check   || exit_error
+cmdecho make install || exit_error
+
+exit 0

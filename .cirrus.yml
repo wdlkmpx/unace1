@@ -33,7 +33,7 @@ macos_task:
 ##https://github.com/dfandrich/gpscorrelate/blob/36dcd86a055999a89b23400b73356d5c34b170c4/.cirrus.yml
 
 linux_musl_task:
-  name: Linux MUSL
+  name: Alpine Linux 3.17
   container:
     image: alpine:3.17
     cpu: 1
