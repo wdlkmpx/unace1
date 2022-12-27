@@ -62,13 +62,14 @@ uninstall:
 	done
 
 check:
+	./run-tests.sh
 
 distcheck:
 
 installcheck:
 
 dist:
-	sh configure release dist
+	./configure release
 
 .PHONY: subdirs $(SUBDIRS)
 

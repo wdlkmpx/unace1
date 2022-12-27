@@ -1,6 +1,5 @@
 #!/bin/sh
-# This is free and unencumbered software released into the public domain.
-#  For more information, please refer to <https://unlicense.org>
+# Public domain
 
 if [ "$(uname -s)" != "Linux" ] ; then
 	echo "This only runs on Linux (requires the GNU C Library)"

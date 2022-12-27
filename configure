@@ -1,6 +1,5 @@
 #!/bin/sh
-# This is free and unencumbered software released into the public domain.
-# For more information, please refer to <http://unlicense.org/>
+# Public Domain
 #
 
 if ! [ -f Makefile ] ; then
@@ -11,6 +10,8 @@ fi
 if ! cd $(dirname "$0") ; then
 	exit 1
 fi
+
+WCONF_SCRIPTDIR=$(pwd)
 
 apps_to_check=''
 extra_env_vars=''
@@ -23,6 +24,7 @@ config_mk_flags=
 w_files_in=
 sysroot=
 
+#==========================================================
 
 w_new_option() # $1=opt [$2=env_variable]
 {
@@ -39,6 +41,27 @@ w_new_option_with()
 	w_opts_check="$w_opts_check $1"
 }
 
+exit_error() {
+	test "$1" && echo "$@"
+	if [ -f config.log ] ; then
+		echo "See config.log, there might be some clues there"
+	fi
+	rm -f config.h config.mk
+	exit 1
+}
+
+cmdecho()
+{
+    echo "# $@"
+    "$@"
+}
+
+getvalue()
+{
+	echo $1 | cut -f 2 -d '='
+}
+
+#==========================================================
 
 if [ -f configure.project ] ; then
 	. ./configure.project
@@ -59,35 +82,29 @@ PACKAGE_VERSION="${VERSION}"
 #==========================================================
 # ./configure release [xz|gz|lz|bz2|zst]
 
-if [ "$1" = "release" ] ; then
-	srcdir=$(pwd)
+if [ "$1" = "release" ] || [ "$1" = "dist" ] ; then
+	srcdir=${WCONF_SCRIPTDIR}
 	outdir=${PACKAGE}-${VERSION}
-	cd ..
-	rm -rf ${outdir}
-	if [ "$2" = "dist" ] ; then
-		# force creation of tarfile, copy the whole dir
-		shift
-		shift
-		cp -rf ${srcdir} ${outdir}
-		cd ${outdir}
-		git clean -dfx
-		rm -rf .*
-		cd ..
-	else
-		if command -v git >/dev/null; then
-			printf "Run 'git clean -dfx'? [y/N]: "
-			read anzwer
-			case $anzwer in y|Y)
-				cd ${srcdir}
-				echo '# git clean -dfx'
-				git clean -dfx
-				cd ..
-				;;
-			esac
-		fi
-		mkdir -p ${outdir}
-		cp -rf ${srcdir}/* ${outdir}/
+	if [ ! -d .git ] ; then
+		echo "Warning: no .git directory, will not be able to perform 'git clean'"
 	fi
+	if [ ! -d .git ] ; then
+		echo "Warning: no .gitignore file, it contains rules to delete unwanted files, the release tarball may not be suitable for release"
+	fi
+	if [ "$outdir" = "$(basename $srcdir)" ] ; then
+		echo "ERROR: output dir ($outdir) is the also input directory"
+		exit 1
+	fi
+	cmdecho cd ..
+	cmdecho rm -rf ${outdir}
+	cmdecho cp -rf ${srcdir} ${outdir}
+	cmdecho mkdir -p ${outdir}
+	cmdecho cd ${outdir}
+	if command -v git >/dev/null; then
+		cmdecho git clean -dfx
+	fi
+	rm -rf .[a-z]* .[A-Z]* .[0-9]*
+	cmdecho cd ..
 	#--
 	echo "# tar -vcf ${outdir}.tar ${outdir}"
 	tar -vcf ${outdir}.tar ${outdir}
@@ -103,27 +120,17 @@ if [ "$1" = "release" ] ; then
 		*)   cmd=${comp} ;;
 	esac
 	rm -f ${outdir}.tar.${comp}
-	echo "# ${cmd} ${outdir}.tar"
-	if ${cmd} ${outdir}.tar ; then
+	if cmdecho ${cmd} ${outdir}.tar ; then
 		echo "*** ${outdir}.tar.${comp} has been created..."
+		exit 0
 	fi
 	rm -f ${outdir}.tar
-	exit
+	exit 1
 fi
 
 # w_conf/gettext: ./configure po|pot
 
 #==========================================================
-
-exit_error() {
-	test "$1" && echo "$@"
-	if [ -f config.log ] ; then
-		echo "See config.log, there might be some clues there"
-	fi
-	rm -f config.h config.mk
-	exit 1
-}
-
 
 check_command() # 1:<cmd> finds $1 in $PATH
 {
@@ -467,8 +474,8 @@ w_require_gnu_make()
 
 #==========================================================
 
-#test "$CC"    || CC='gcc'
-#test "$CXX"   || CXX='g++'
+#test "$CC"    || CC='cc'
+#test "$CXX"   || CXX='c++'
 test "$STRIP"  || STRIP='strip'
 test "$AR"     || AR='ar'
 test "$AS"     || AS='as'
@@ -498,8 +505,8 @@ infodir='${datarootdir}/info'
 mandir='${datarootdir}/man'
 localedir='${datarootdir}/locale'
 runstatedir='${localstatedir}/run'
-top_builddir="$(pwd)"
-top_srcdir="$(pwd)"
+top_builddir="${WCONF_SCRIPTDIR}"
+top_srcdir="${WCONF_SCRIPTDIR}"
 builddir=.
 srcdir=.
 
@@ -616,10 +623,6 @@ print_extra_env_variables()
 }
 
 #==========================================================
-
-getvalue() {
-	echo $1 | cut -f 2 -d '='
-}
 
 for i in $@
 do

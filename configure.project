@@ -17,22 +17,11 @@ PROJECT_LIBS=''
 # supported values: C, C++ ("" = C++)
 PROJECT_TYPE=C
 
-# Files.in, to replace @VERSION@ and a few other variables
-#  see w_conf/00_standard_infile.sh for a complete list
-#w_infiles='lib/libmp3.pc'
-
 # config.h: custom extra lines
 w_config_h_extra_lines=""
 
 # config.mk: custom extra lines
 w_config_mk_extra_lines=""
-
-#w_new_option <OPT>
-#  Manually create the following funcs:
-#   opt_print_<OPT>()     { }
-#   opt_configure_<OPT>() { }
-#   opt_check_<OPT>()     { }
-
 
 # configure the project using the commands provided
 # by `configure` and other scripts and commands/tools

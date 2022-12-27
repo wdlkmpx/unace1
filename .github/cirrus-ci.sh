@@ -20,18 +20,21 @@ uname -a
 
 export CFLAGS="-DDEBUG_W_ENDIAN"
 
-#./configure && make && make install
-./run-tests.sh
-exit_code=$?
+./configure  || exit 1
+make         || exit 1
+make check   || exit 1
+make install || exit 1
+
+exit 0
 
 for i in config.h config.log config.mk
 do
-   echo "
+    echo "
 ===============================
 	$i
 ===============================
 "
-   cat ${i}
+    cat ${i}
 done
 
 exit ${exit_code}

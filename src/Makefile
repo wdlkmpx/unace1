@@ -43,15 +43,3 @@ install-strip: strip install
 uninstall:
 	rm -f $(DESTDIR)$(bindir)/$(APP)
 
-makefile.dep:
-	$(CC) -MM $(SRCS) > makefile.dep
-
-# ------------------------------------------------------------------------
-# make makefile.dep
-globals.o: globals.c acestruc.h declare.h pendian_detect.h unace.h
-uac.o: uac.c globals.h acestruc.h declare.h pendian_detect.h unace.h \
- uac.h
-uac_dcpr.o: uac_dcpr.c declare.h pendian_detect.h globals.h acestruc.h \
- unace.h uac.h
-unace.o: unace.c declare.h pendian_detect.h globals.h acestruc.h unace.h \
- uac.h
