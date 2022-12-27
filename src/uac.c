@@ -191,7 +191,9 @@ FILE * create_dest_file (CHAR * file, INT a)  // creates file or directory
    mksubdirs (file);
    if (f_err)
       return (NULL);
-#define _A_SUBDIR 0x10        /* MS-DOS directory constant */
+#ifndef _A_SUBDIR //already defined in mingw
+#define _A_SUBDIR 0x10 /* MS-DOS directory constant */
+#endif
    if (a & _A_SUBDIR)
    {                                // create dir or file?
       if (ex) {
