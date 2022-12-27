@@ -118,7 +118,7 @@ if [ ${iret} -ne ${expected_ret} ] ; then
     echo "Something is wrong with $app"
     echo "Got code $iret (expected ${expected_ret})"
     echo "Aborted"
-    exit
+    exit 1
 fi
 
 # ===========================================================================
@@ -163,6 +163,7 @@ fi
 printf "* tests/out_of_bounds.ace: "
 cmdecho ${app} t ${test_ace_dir}/out_of_bounds.ace >${TESTDIR}/out_of_bounds.log 2>&1
 if grep 'fault' ${TESTDIR}/out_of_bounds.log ; then
+	ret=1
 	echo "ERROR"
 	add_error_file ${TESTDIR}/out_of_bounds.log
 else
@@ -223,9 +224,9 @@ fi
 if test -z "$KEEP_TESTS" ; then
 	rm -rf ${TESTDIR}
 else
-	printf "\n\n----------------------------------\n"
+	printf "\n\n.......................................\n"
 	printf "- Logs are in $TESTDIR\n"
-	printf "----------------------------------\n\n"
+	printf ".......................................\n\n"
 fi
 
 exit $ret
