@@ -235,7 +235,7 @@ if test -z "$KEEP_TESTS" ; then
 	rm -rf ${TESTDIR}
 else
 	printf "\n\n.......................................\n"
-	printf "- Logs are in $TESTDIR\n"
+	printf " Logs are in $TESTDIR\n"
 	printf ".......................................\n\n"
 fi
 
