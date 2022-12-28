@@ -1,6 +1,9 @@
 #!/bin/sh
 # Public domain
 
+# command to generate md5 checksums from <dirx>
+# md5sum $(find dirx -type f | sort | sed 's%\./%%')
+
 MWD=$(pwd)
 TESTDIR="$HOME/.cache/unace1tests"
 #KEEP_TESTS=1
@@ -9,13 +12,15 @@ mkdir -p "${TESTDIR}"
 app="$(pwd)/src/unace1"
 appbn=$(basename $app)
 export CFLAGS="-D${appbn}_TRACE -ggdb3"
-test_ace_dir=${MWD}/tests
+test_acev1_dir=${MWD}/tests
+help_ret_code=8
 
 # ===========================================================================
 
 ERROR_FILES=''
 add_error_file()
 {
+    ret=1
     ERROR_FILES="$ERROR_FILES $1"
 }
 
@@ -57,7 +62,6 @@ check_md5()
 		while read md5 file
 		do
 			if ! md5 -q -s "$md5" "$file" >/dev/null 2>&1 ; then
-				ret=1
 				echo "ERROR"
 				add_error_file ${logfile}
 				return
@@ -70,7 +74,6 @@ check_md5()
 	if ${MD5SUM} -c ${md5file} >>${logfile} 2>&1 ; then
 		echo "OK"
 	else
-		ret=1
 		echo "ERROR"
 		add_error_file ${logfile}
 	fi
@@ -111,7 +114,7 @@ else
 fi
 
 # basic check
-expected_ret=8
+expected_ret=${help_ret_code}
 ${app} -h >/dev/null
 iret=$?
 if [ ${iret} -ne ${expected_ret} ] ; then
@@ -139,80 +142,83 @@ cd ${TESTDIR}
 
 ret=0
 
+ACEFILE=${test_acev1_dir}/dirtraversal1.ace
+MD5FILE=
+LOGFILE=${TESTDIR}/dirtraversal1.log
 echo
-printf "* tests/dirtraversal1.ace: "
-cmdecho ${app} x -y ${test_ace_dir}/dirtraversal1.ace >${TESTDIR}/dirtraversal1.log 2>&1
+printf "* tests/${ACEFILE##*/}: "
+cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
 if [ $? -eq 7 ] ; then
 	echo "OK"
 else
-	ret=1
 	echo "ERROR"
-	add_error_file ${TESTDIR}/dirtraversal1.log
+	add_error_file ${LOGFILE}
 fi
 
-printf "* tests/dirtraversal2.ace: "
-cmdecho ${app} x -y ${test_ace_dir}/dirtraversal2.ace >${TESTDIR}/dirtraversal2.log 2>&1
+ACEFILE=${test_acev1_dir}/dirtraversal2.ace
+MD5FILE=
+LOGFILE=${TESTDIR}/dirtraversal2.log
+printf "* tests/${ACEFILE##*/}: "
+cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
 if [ $? -eq 7 ] ; then
 	echo "OK"
 else
-	ret=1
 	echo "ERROR"
-	add_error_file ${TESTDIR}/dirtraversal2.log
+	add_error_file ${LOGFILE}
 fi
 
+ACEFILE=${test_acev1_dir}/out_of_bounds.ace
+MD5FILE=
+LOGFILE=${TESTDIR}/out_of_bounds.log
 printf "* tests/out_of_bounds.ace: "
-cmdecho ${app} t ${test_ace_dir}/out_of_bounds.ace >${TESTDIR}/out_of_bounds.log 2>&1
-if grep 'fault' ${TESTDIR}/out_of_bounds.log ; then
-	ret=1
+cmdecho ${app} t ${ACEFILE} >${LOGFILE} 2>&1
+if grep 'fault' ${LOGFILE} ; then
 	echo "ERROR"
-	add_error_file ${TESTDIR}/out_of_bounds.log
+	add_error_file ${LOGFILE}
 else
 	echo "OK"
 fi
 
-printf "* tests/onefile.ace: "
+ACEFILE=${test_acev1_dir}/onefile.ace
+MD5FILE=${test_acev1_dir}/onefile.md5
+LOGFILE=${TESTDIR}/onefile.log
+printf "* tests/${ACEFILE##*/}: "
 rm -f CHANGES.LOG
-cmdecho ${app} x -y ${test_ace_dir}/onefile.ace >${TESTDIR}/onefile.log 2>&1
-check_md5 ${test_ace_dir}/onefile.md5 ${TESTDIR}/onefile.log
+cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
+check_md5 ${MD5FILE} ${LOGFILE}
 
 ## unace1 doesn't support password protected archives
-#printf "* tests/passwd.ace: "
+#ACEFILE=${test_acev1_dir}/passwd.ace
+#MD5FILE=${test_acev1_dir}/passwd.md5
+#LOGFILE=${TESTDIR}/passwd.log
+#printf "* tests/${ACEFILE##*/}: "
 #rm -f passwd.m4
-#cmdecho ${app} x -y -p1234 ${test_ace_dir}/passwd.ace >${TESTDIR}/passwd.log 2>&1
-#check_md5 ${test_ace_dir}/passwd.md5 ${TESTDIR}/passwd.log
+#cmdecho ${app} x -y -p1234 ${ACEFILE} >${LOGFILE} 2>&1
+#check_md5 ${MD5FILE} ${LOGFILE}
 
-printf "* tests/ZGFX2.ace: "
+ACEFILE=${test_acev1_dir}/ZGFX2.ace
+MD5FILE=${test_acev1_dir}/ZGFX2.md5
+LOGFILE=${TESTDIR}/ZGFX2.log
+printf "* tests/${ACEFILE##*/}: "
 rm -rf ZGFX2
-cmdecho ${app} x -y ${test_ace_dir}/ZGFX2.ace >${TESTDIR}/ZGFX2.log 2>&1
-if [ $? -eq 0 ] && [ $(find ZGFX2 -type f | wc -l) -eq 223 ] ; then
-	check_md5 ${test_ace_dir}/ZGFX2.md5 ${TESTDIR}/ZGFX2.log
-else
-	ret=1
-	echo "ERROR"
-	add_error_file ${TESTDIR}/ZGFX2.log
-fi
+cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
+check_md5 ${MD5FILE} ${LOGFILE}
 
-printf "* tests/zdir.ace: "
+ACEFILE=${test_acev1_dir}/zdir.ace
+MD5FILE=${test_acev1_dir}/zdir.md5
+LOGFILE=${TESTDIR}/zdir.log
+printf "* tests/${ACEFILE##*/}: "
 rm -rf zman
-cmdecho ${app} x -y ${test_ace_dir}/zdir.ace >${TESTDIR}/zdir.log 2>&1
-if [ $? -eq 0 ] && [ $(find zman -type f | wc -l) -eq 20 ] ; then
-	check_md5 ${test_ace_dir}/zdir.md5 ${TESTDIR}/zdir.log
-else
-	ret=1
-	echo "ERROR"
-	add_error_file ${TESTDIR}/zdir.log
-fi
+cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
+check_md5 ${MD5FILE} ${LOGFILE}
 
-printf "* tests/multivolume.ace: "
+ACEFILE=${test_acev1_dir}/multivolume.ace
+MD5FILE=${test_acev1_dir}/multivolume.md5
+LOGFILE=${TESTDIR}/multivolume.log
+printf "* tests/${ACEFILE##*/}: "
 rm -rf aclocal
-cmdecho ${app} x -y ${test_ace_dir}/multivolume.ace >${TESTDIR}/multivolume.log 2>&1
-if [ $? -eq 0 ] && [ $(find aclocal -type f | wc -l) -eq 77 ] ; then
-	check_md5 ${test_ace_dir}/multivolume.md5 ${TESTDIR}/multivolume.log
-else
-	ret=1
-	echo "ERROR"
-	add_error_file ${TESTDIR}/multivolume.log
-fi
+cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
+check_md5 ${MD5FILE} ${LOGFILE}
 
 # ===========================================================================
 
