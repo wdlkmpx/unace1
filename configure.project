@@ -6,7 +6,8 @@ VERSION="1.4b"
 PACKAGE_URL=''
 
 # Flags that will be used in all makefiles that compile code...
-PROJECT_CFLAGS='-Wall -g -O2' # -Wextra -Wno-unused-parameter -Wno-missing-field-initializers
+# -O2: breaks alpine linux build
+PROJECT_CFLAGS='-Wall -g' # -Wextra -Wno-unused-parameter -Wno-missing-field-initializers
 PROJECT_CXXFLAGS="${PROJECT_CFLAGS}"
 PROJECT_CPPFLAGS=''
 PROJECT_LDFLAGS=''
