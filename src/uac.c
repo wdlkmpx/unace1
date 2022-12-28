@@ -160,8 +160,14 @@ static void mksubdirs (CHAR * f)        // checks/creates path of file
 {
    CHAR d[PATH_MAX];
    CHAR *p = d;
-   size_t len = (strlen (f) >= PATH_MAX) ? (PATH_MAX - 1) : (strlen (f));
+   size_t len;
+   if (strlen(f) >= PATH_MAX) {
+       len = PATH_MAX-1;
+   } else {
+       len = strlen(f);
+   }
    strncpy (d, f, len);
+   d[len] = 0;
 
    while (p && *p)
    {
