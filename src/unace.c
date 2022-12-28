@@ -343,8 +343,7 @@ void analyze_file(void)         // analyzes one file (for solid archives)
 
 void extract_file(void)         // extracts one file
 {
-   INT  rd;
-
+   size_t rd;
    printf("\n Extracting");
    flush;                       // decompress block
    while (!cancel() && (rd = dcpr_adds_blk(buf_wr, size_wrb)))

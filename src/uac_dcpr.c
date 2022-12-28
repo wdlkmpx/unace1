@@ -18,7 +18,7 @@
 #include "uac.h"
 
 static INT calc_dectabs(void);
-static INT read_wd(UINT maxwd, USHORT * code, UCHAR * wd, INT max_el);
+static INT read_wd(UINT maxwd, USHORT * code, UCHAR * wd, UINT max_el);
 
 
 static void memset16(USHORT * dest, SHORT val, INT len)  // fills short-array with
@@ -335,7 +335,7 @@ INT  makecode(UINT maxwd, UINT size1_t, UCHAR * wd, USHORT * code)
    return (1);
 }
 
-static INT  read_wd(UINT maxwd, USHORT * code, UCHAR * wd, INT max_el)
+static INT read_wd(UINT maxwd, USHORT * code, UCHAR * wd, UINT max_el)
 {
    UINT c,
         i,
