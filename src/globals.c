@@ -13,9 +13,6 @@
 //-------- Ace sign
 const char *acesign = "**ACE**";
 
-//-------- Version string for program
-const char *version="UNACE v1.4b    public version\n";
-
 //-------- header buffer and pointers
 thead head;
 

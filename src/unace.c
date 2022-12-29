@@ -7,10 +7,15 @@
 /* ------------------------------------------------------------------------ */
 
 #include "declare.h"
+#include <config.h>
 
 #if defined(unace1_TRACE) && defined(__GLIBC__)
 #include <mcheck.h>
 #endif
+
+//-------- Version string for program
+const char *version_msg = "UNACE " VERSION "    public version\n";
+
 
 //--------------- include general files ------------------------------------//
 #include <ctype.h>      // tolower()
@@ -484,7 +489,7 @@ int main(INT argc, CHAR * argv[])              // processes the archive
    INT show_help,
        arg_cnt = 1;
 
-   printf("%s", version);
+   printf("%s", version_msg);
    show_help=0;
 
    if (argc < 3 || strlen(argv[1]) > 1 || argv[argc-1][0] == '-')
