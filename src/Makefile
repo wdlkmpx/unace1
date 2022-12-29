@@ -7,7 +7,7 @@ OBJS = globals.o uac.o uac_dcpr.o unace.o
 SRCS = globals.c uac.c uac_dcpr.c unace.c
 
 #CPPFLAGS += -I..
-CFLAGS += -I..
+CFLAGS += -I.. -I../lib
 
 all: $(APP)
 

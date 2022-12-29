@@ -9,7 +9,7 @@
 #ifndef __declare_h
 #define __declare_h
 
-#include "pendian_detect.h"
+#include "w_endian.h"
 #include <stdint.h>
 
 typedef uint16_t       USHORT;
