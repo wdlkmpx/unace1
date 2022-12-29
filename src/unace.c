@@ -472,7 +472,6 @@ void showhelp(void)
           "\n"
           " -n   Never overwrite existing file(s)"
         );
-   f_err = ERR_CLINE;
 }
 
 int main(INT argc, CHAR * argv[])              // processes the archive
@@ -504,8 +503,13 @@ int main(INT argc, CHAR * argv[])              // processes the archive
          case 'n':
             f_ovrnvr    = 1;    // Never Overwrite
             break;
+         case 'h':
+            show_help = 1;  // help
+            f_err = 0;
+            break;
          default:
             show_help = 1;
+            f_err = ERR_CLINE;
             break;
       }
    }

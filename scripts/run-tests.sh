@@ -16,7 +16,7 @@ app="$(pwd)/src/unace1"
 appbn=$(basename $app)
 export CFLAGS="-D${appbn}_TRACE -g -O0 -ggdb3 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers"
 test_acev1_dir=${MWD}/tests
-help_ret_code=8
+help_ret_code=0
 
 # ===========================================================================
 
