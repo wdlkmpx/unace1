@@ -1,16 +1,18 @@
 // Public Domain
+// 2022-12-29
 
 /*
+ Assume little endian by default, detect big endian (W_BIG_ENDIAN)
+
+ Define WORDS_BIGENDIAN if a big endian system is detected
+        (compatibility with autoconf)
+
  https://gist.github.com/PkmX/63dd23f28ba885be53a5
  https://gist.github.com/panzi/6856583
  
- docs:
-   https://man7.org/linux/man-pages/man3/endian.3.html
-   https://man7.org/linux/man-pages/man3/bswap.3.html
-   https://man.openbsd.org/OpenBSD-5.6/byteorder.3
-
- Defines WORDS_BIGENDIAN if a big endian system is detected
-   (compatibility with autoconf)
+ https://man7.org/linux/man-pages/man3/endian.3.html
+ https://man7.org/linux/man-pages/man3/bswap.3.html
+ https://man.openbsd.org/OpenBSD-5.6/byteorder.3
 */
  
 #ifndef __W_ENDIAN_H__
@@ -121,71 +123,31 @@ extern "C" {
 // define W_LITTLE_ENDIAN or W_BIG_ENDIAN
 
 #if defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) && defined(__ORDER_LITTLE_ENDIAN__)
-#   ifdef DEBUG_W_ENDIAN
-#       warning [DEBUG]  using __BYTE_ORDER__ to determine endianness
-#   endif
-#   if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#       define W_LITTLE_ENDIAN 1
-#   elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#   if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #       define W_BIG_ENDIAN 1
 #   endif
 
 #elif defined(__BYTE_ORDER) && defined(__ORDER_BIG_ENDIAN) && defined(__ORDER_LITTLE_ENDIAN)
-#   ifdef DEBUG_W_ENDIAN
-#       warning [DEBUG]  using __BYTE_ORDER (1) to determine endianness
-#   endif
-#   if __BYTE_ORDER == __ORDER_LITTLE_ENDIAN
-#       define W_LITTLE_ENDIAN 1
-#   elif __BYTE_ORDER == __ORDER_BIG_ENDIAN
+#   if __BYTE_ORDER == __ORDER_BIG_ENDIAN
 #       define W_BIG_ENDIAN 1
 #   endif
 
 #elif defined(__BYTE_ORDER) && defined(__BIG_ENDIAN) && defined(__LITTLE_ENDIAN)
-#   ifdef DEBUG_W_ENDIAN
-#       warning [DEBUG] using __BYTE_ORDER (2) to determine endianness
-#   endif
 #   if __BYTE_ORDER == __BIG_ENDIAN
-#       define W_LITTLE_ENDIAN 1
-#   elif __BYTE_ORDER == __LITTLE_ENDIAN
 #       define W_BIG_ENDIAN 1
 #   endif
 
 #elif defined(_BYTE_ORDER) && defined(_BIG_ENDIAN) && defined(_LITTLE_ENDIAN)
     //solaris is known to use this
-#   ifdef DEBUG_W_ENDIAN
-#       warning [DEBUG] using _BYTE_ORDER to determine endianness
-#   endif
 #   if _BYTE_ORDER == _BIG_ENDIAN
-#       define W_LITTLE_ENDIAN 1
-#   elif _BYTE_ORDER == _LITTLE_ENDIAN
 #       define W_BIG_ENDIAN 1
 #   endif
 
 #elif defined(BYTE_ORDER) && defined(BIG_ENDIAN) && defined(LITTLE_ENDIAN)
-    //FreeBSD and similir os'es
-#   ifdef DEBUG_W_ENDIAN
-#       warning [DEBUG] using BYTE_ORDER to determine endianness
-#   endif
+    //FreeBSD and similar os'es
 #   if BYTE_ORDER == BIG_ENDIAN
-#       define W_LITTLE_ENDIAN 1
-#   elif BYTE_ORDER == LITTLE_ENDIAN
 #       define W_BIG_ENDIAN 1
 #   endif
-
-#elif defined(__LITTLE_ENDIAN__) ||                                      \
-      defined(__ARMEL__) || defined(__THUMBEL__) || defined(__AARCH64EL__) || \
-      defined(_MIPSEL)  || defined(__MIPSEL)   || defined(__MIPSEL__)      || \
-      defined(_M_X64)   || defined(_M_IX86)    || defined(_M_I86)          || \
-      defined(__i386__) || defined(sun386)     || defined(__alpha__)  ||   \
-      defined(__ia64)   || defined(__ia64__)   ||                          \
-      defined(_M_IA64)  || defined(_M_ALPHA)   ||                          \
-      defined(__amd64)  || defined(__amd64__)  || defined(_M_AMD64)   ||   \
-      defined(__x86_64) || defined(__x86_64__) || defined(_M_X64)     ||   \
-      defined(__bfin__) || defined(__VMS)
-#   ifdef DEBUG_W_ENDIAN
-#       warning [DEBUG] extra LITTLE ENDIAN macros detected
-#   endif
-#   define W_LITTLE_ENDIAN 1
 
 #elif defined (__BIG_ENDIAN__) ||                                              \
       defined(__ARMEB__) || defined(THUMBEB__)   || defined (__AARCH64EB__) || \
@@ -194,37 +156,21 @@ extern "C" {
       defined(_POWER)    || defined(__powerpc__) || defined(__ppc__)        || \
       defined(__hpux)    || defined(__hppa)      ||                            \
       defined(__s390__)  || defined(__s390x__)   || defined(__zarch__)
-#   ifdef DEBUG_W_ENDIAN
-#       warning [DEBUG] extra BIG ENDIAN macros detected
-#   endif
 #   define W_BIG_ENDIAN 1
-#endif
-
-#if defined(W_LITTLE_ENDIAN) && defined(W_BIG_ENDIAN)
-#error something went wrong - W_LITTLE_ENDIAN & W_BIG_ENDIAN are defined
-#endif
-
-#if !defined(W_LITTLE_ENDIAN) && !defined(W_BIG_ENDIAN)
-#warning cannot identify endianness, assuming LITTLE ENDIAN...
-#define W_LITTLE_ENDIAN 1
-#endif
-
-#ifdef W_LITTLE_ENDIAN
-#   ifdef DEBUG_W_ENDIAN
-#       warning [DEBUG] LITTLE ENDIAN detected
-#   endif
-#   ifndef __LITTLE_ENDIAN__
-#       define __LITTLE_ENDIAN__ 1
-#   endif
 #endif
 
 #ifdef W_BIG_ENDIAN
 #   ifdef DEBUG_W_ENDIAN
 #       warning [DEBUG] BIG ENDIAN detected
 #   endif
+#   define WORDS_BIGENDIAN 1
 #   ifndef __BIG_ENDIAN__
-#       define WORDS_BIGENDIAN 1
 #       define __BIG_ENDIAN__ 1
+#   endif
+#else // little endian, default
+#   define W_LITTLE_ENDIAN 1
+#   ifndef __LITTLE_ENDIAN__
+#       define __LITTLE_ENDIAN__ 1
 #   endif
 #endif
 

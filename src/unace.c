@@ -89,7 +89,7 @@ INT  read_header(INT print_err)         // reads any header from archive
    if (fread(&head, 1, 4, archive_fp) < 4)
       return 0;                         // read CRC and header size
 
-#ifdef __BIG_ENDIAN__
+#ifdef WORDS_BIGENDIAN
    WORDswap(&head.HEAD_CRC);
    WORDswap(&head.HEAD_SIZE);
 #endif

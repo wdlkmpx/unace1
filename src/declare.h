@@ -38,7 +38,7 @@ typedef int            INT   ;
  *  p is a pointer to char.
  */
 
-#ifdef __BIG_ENDIAN__
+#ifdef WORDS_BIGENDIAN
 
 #define WORDswap(n)  (*(n) = (*(n) << 8) | (*(n) >> 8))
 #define LONGswap(n)  ( WORDswap(&((WORD *)(n))[0]),\
@@ -49,14 +49,14 @@ typedef int            INT   ;
 #define BUF2WORD(p) ((UWORD)*(p) | (*((p)+1)<<8))
 #define BUF2LONG(p) ((ULONG)*(p) | (*((p)+1)<<8) | (*((p)+2)<<16) | (*((p)+3)<<24))
 
-#else /* __BIG_ENDIAN__ */
+#else /* little endian */
 
 #define BUFP2WORD(p) *(UWORD*)((p+=2)-2)
 #define BUFP2LONG(p) *(ULONG*)((p+=4)-4)
 #define BUF2WORD(p) (*(UWORD*)p)
 #define BUF2LONG(p) (*(ULONG*)p)
 
-#endif /* !__BIG_ENDIAN__ */
+#endif /* WORDS_BIGENDIAN */
 
 /* Timestamp macros */
 
