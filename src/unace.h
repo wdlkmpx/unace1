@@ -16,9 +16,9 @@ INT read_adds_blk(CHAR * buffer, INT len);
 
 //--------- buffers: increase sizes when possible to speed up the program
 
-#define size_rdb  1024
-#define size_wrb  2048
-#define size_buf  1024
+#define size_rdb  2048
+#define size_wrb  4096
+#define size_buf  2048
 
 #define size_headrdb (sizeof(head)-20) // (some bytes less esp. for Amiga)
 
