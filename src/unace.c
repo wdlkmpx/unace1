@@ -492,8 +492,16 @@ int main(INT argc, CHAR * argv[])              // processes the archive
    printf("%s", version_msg);
    show_help=0;
 
-   if (argc < 3 || strlen(argv[1]) > 1 || argv[argc-1][0] == '-')
+   if (argc < 3 || strlen(argv[1]) > 1 || argv[argc-1][0] == '-') {
       show_help=1;
+      f_err = ERR_CLINE;
+   }
+
+   // empty args or -h /? trigger help without error code
+   if (argc == 1 || !strcmp(argv[1],"-h") || !strcmp(argv[1],"/?")) {
+       show_help=1;
+       f_err = 0;
+   }
 
    while (!show_help && argv[++arg_cnt][0] == '-')
    {
@@ -507,10 +515,6 @@ int main(INT argc, CHAR * argv[])              // processes the archive
             break;
          case 'n':
             f_ovrnvr    = 1;    // Never Overwrite
-            break;
-         case 'h':
-            show_help = 1;  // help
-            f_err = 0;
             break;
          default:
             show_help = 1;
