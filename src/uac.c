@@ -176,7 +176,7 @@ static void mksubdirs (CHAR * f)        // checks/creates path of file
          return;
       *p = 0;
       if (!fileexists(d)) {
-         if (mkdir(d)) {
+         if (mkdir(d) != 0) {
             f_err = ERR_WRITE;
             printf("\n    Error while creating directory.\n");
          }
@@ -202,7 +202,7 @@ FILE * create_dest_file (CHAR * file, INT a)  // creates file or directory
    if (a & _A_SUBDIR)
    {                                // create dir or file?
       if (!ex) {
-         if (!mkdir(file)) {
+         if (mkdir(file) != 0) {
              printf("\n    Could not create directory.\n");
          }
       }
