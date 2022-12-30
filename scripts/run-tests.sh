@@ -10,6 +10,7 @@
 MWD=$(pwd)
 TESTDIR="$HOME/.cache/unace1tests"
 #KEEP_TESTS=1
+#VERBOSE_ERRORS=1 #this is for CI
 mkdir -p "${TESTDIR}"
 
 app="$(pwd)/src/unace1"
@@ -261,7 +262,9 @@ check_md5_and_dirs ${MD5FILE} ${LOGFILE}
 
 if [ $ret != 0 ] ; then
     KEEP_TESTS=1 # errors, need logs
-    cat $ERROR_FILES
+    if [ -n "$VERBOSE_ERRORS" ] ; then
+        cat $ERROR_FILES
+    fi
 fi
 
 if test -z "$KEEP_TESTS" ; then
