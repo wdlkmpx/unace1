@@ -527,12 +527,13 @@ int main(INT argc, CHAR * argv[])              // processes the archive
 
       init_unace();                              // initialize unace
 
-      strncpy(aname, argv[arg_cnt], sizeof(aname) - 4);  // get archive name
-      aname[sizeof(aname) - 5] = '\0';
-      if (!(s = (CHAR *) strrchr(aname, DIRSEP)))
+      // get archive name
+      snprintf (aname, sizeof(aname)-4, "%s", argv[arg_cnt]);
+
+      if (!(s = strrchr(aname, DIRSEP)))
          s = aname;
       if (!strrchr(s, '.'))
-         strcat(aname, ".ACE");
+         strcat(aname, ".ace");
 
       if (open_archive(1))                       // open archive to process
       {

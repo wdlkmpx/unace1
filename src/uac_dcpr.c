@@ -200,15 +200,6 @@ void dcpr_comm(INT comm_size)
 }
 
 //------------------------- LZW DECOMPRESSION ------------------------------//
-void wrchar(CHAR ch)
-{
-   dcpr_do++;
-
-   dcpr_text[dcpr_dpos] = ch;
-   dcpr_dpos++;
-   dcpr_dpos &= dcpr_dican;
-}
-
 void copystr(LONG d, INT l)
 {
    INT  mpos;
@@ -288,8 +279,13 @@ void decompress(void)
          lg += i;
          copystr(dist, lg);
       }
-      else
-         wrchar(c);
+      else {
+         //wrchar(c);
+         dcpr_do++;
+         dcpr_text[dcpr_dpos] = c;
+         dcpr_dpos++;
+         dcpr_dpos &= dcpr_dican;
+     }
    }
 }
 

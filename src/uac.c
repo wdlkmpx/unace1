@@ -114,9 +114,10 @@ static int is_directory_traversal(char *str)
 void ace_fname (CHAR * out_s, thead * head, INT nopath, unsigned int size, INT extract)
 {
    char *cp = NULL;
-   unsigned int fnsize = (*(tfhead *) head).FNAME_SIZE;
+   unsigned int fnsize = ((tfhead*)head)->FNAME_SIZE;
    unsigned int x = (fnsize >= size) ? (size-1) : fnsize;
-   strncpy (out_s, (*(tfhead *) head).FNAME, size-2);
+   snprintf (out_s, size-1, "%s", ((tfhead*)head)->FNAME);
+   // need exact size, as the filename may not end in '\0'
    out_s[x] = 0;
 
    if (extract)
@@ -160,14 +161,7 @@ static void mksubdirs (CHAR * f)        // checks/creates path of file
 {
    CHAR d[PATH_MAX];
    CHAR *p = d;
-   size_t len;
-   if (strlen(f) >= PATH_MAX) {
-       len = PATH_MAX-1;
-   } else {
-       len = strlen(f);
-   }
-   strncpy (d, f, len);
-   d[len] = 0;
+   snprintf (d, sizeof(d)-1, "%s", f);
 
    while (p && *p)
    {
