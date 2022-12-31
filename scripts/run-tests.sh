@@ -64,7 +64,10 @@ check_md5()
 	if [ "$MD5SUM" = "md5" ] ; then # --BSD--
 		while read md5 file
 		do
-			if ! md5 -c "$md5" "$file" >>${logfile} 2>&1 ; then
+			filesum=$(md5 -q "$file")
+			if [ "$md5" != "$filesum" ] ; then
+				echo "${file}: FAILED"  >>${logfile}
+				echo "*** checksum failed. stopped" >>${logfile}
 				return 1 #error
 			fi
 		done < ${md5file}
