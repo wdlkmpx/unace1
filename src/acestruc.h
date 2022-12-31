@@ -7,6 +7,7 @@
 
 #include "declare.h"
 
+#define acesign        "**ACE**"
 #define acesign_len           7
 #define bytes_before_acesign  7
 #define acever               10
