@@ -44,13 +44,9 @@ set_wine()
 
 if test -z "$MD5SUM" ; then
 	if command -v md5sum 2>/dev/null ; then
-		if [ -n "$(md5sum --help 2>&1 | grep BusyBox)" ] ; then
-			MD5SUM='md5sum -s' #busybox
-		else
-			MD5SUM='md5sum --quiet'
-		fi
+		MD5SUM='md5sum'
 	elif command -v gmd5sum 2>/dev/null ; then
-		MD5SUM='gmd5sum --quiet'
+		MD5SUM='gmd5sum'
 	elif command -v md5 2>/dev/null ; then
 		MD5SUM='md5'
 	fi
@@ -59,25 +55,25 @@ fi
 
 check_md5()
 {
-	if test -z "$MD5SUM" ; then
-		return
-	fi
 	md5file="$1"
 	logfile="$2"
-
-	if [ "$MD5SUM" = "md5" ] ; then
-		# BSD
+	if test -z "$MD5SUM" || test -z "$md5file" ; then
+		return
+	fi
+	echo "------------------------------" >>${logfile}
+	if [ "$MD5SUM" = "md5" ] ; then # --BSD--
 		while read md5 file
 		do
-			if ! md5 -q -s "$md5" "$file" >/dev/null 2>&1 ; then
+			if ! md5 -c "$md5" "$file" >>${logfile} 2>&1 ; then
 				return 1 #error
 			fi
 		done < ${md5file}
-	else # GNU
+	else # --GNU--
 		if ! ${MD5SUM} -c ${md5file} >>${logfile} 2>&1 ; then
 			return 1 #error
 		fi
 	fi
+	echo "------------------------------" >>${logfile}
 	return 0 # ok
 }
 
