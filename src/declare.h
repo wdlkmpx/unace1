@@ -58,18 +58,5 @@ typedef int            INT   ;
 
 #endif /* WORDS_BIGENDIAN */
 
-/* Timestamp macros */
-
-#define get_tx(m,d,h,n) (((ULONG)m<<21)+((ULONG)d<<16)+((ULONG)h<<11)+(n<<5))
-#define get_tstamp(y,m,d,h,n,s) ((((ULONG)(y-1980))<<25)+get_tx(m,d,h,n)+(s/2))
-
-#define ts_year(ts)  ((UINT)((ts >> 25) & 0x7f) + 1980)
-#define ts_month(ts) ((UINT)(ts >> 21) & 0x0f)      // 1..12 means Jan..Dec
-#define ts_day(ts)   ((UINT)(ts >> 16) & 0x1f)      // 1..31 means 1st..31st
-#define ts_hour(ts)  ((UINT)(ts >> 11) & 0x1f)
-#define ts_min(ts)   ((UINT)(ts >> 5) & 0x3f)
-#define ts_sec(ts)   ((UINT)((ts & 0x1f) * 2))
-
-
 #endif /* __declare_h */
 
