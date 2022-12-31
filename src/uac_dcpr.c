@@ -8,14 +8,7 @@
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */
 
-#include "declare.h"
-
-#include <stdio.h>   // printf()
-#include <stdlib.h>  // malloc()
-#include <string.h>
-
-#include "globals.h"
-#include "uac.h"
+#include "unace.h"
 
 static INT calc_dectabs(void);
 static INT read_wd(UINT maxwd, USHORT * code, UCHAR * wd, UINT max_el);

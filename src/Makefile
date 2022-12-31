@@ -3,8 +3,7 @@ include ../config.mk
 
 APP  = unace1
 # ls *.c | sed 's%\.c%.o%g'
-OBJS = globals.o uac.o uac_dcpr.o unace.o
-SRCS = globals.c uac.c uac_dcpr.c unace.c
+OBJS = uac.o uac_dcpr.o unace.o
 
 #CPPFLAGS += -I..
 CFLAGS += -I.. -I../lib

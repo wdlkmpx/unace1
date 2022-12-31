@@ -2,20 +2,15 @@
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */
 
-#include <stdio.h>     // printf() remove()
-#include <string.h>    // strncpy()
+#include "unace.h"
 #include <sys/stat.h>  // struct stat
 #include <ctype.h>     // toupper()
-
 #ifdef _WIN32
 #include <direct.h>   // mkdir()
 #else
 #include <unistd.h>
 #define mkdir(_a) mkdir(_a,  S_IRWXU | S_IRWXG | S_IRWXO)
 #endif
-
-#include "globals.h"
-#include "uac.h"
 
 // ==========================================================
 /*      Decompresses and outputs comment if present.       */

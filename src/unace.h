@@ -1,11 +1,24 @@
 /* ------------------------------------------------------------------------ */
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */  
+// only include this header
 
-#ifndef __unace_h
-#define __unace_h
+#ifndef __UNACE_H__
+#define __UNACE_H__
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "declare.h"
+#include "acestruc.h"
+
+#if defined(_WIN32)
+  #define DIRSEP '\\'
+#else
+  #define UNIX 1
+  #define DIRSEP '/'
+#endif
 
 //--------- functions
 INT read_adds_blk(CHAR * buffer, INT len);
@@ -61,5 +74,95 @@ INT read_adds_blk(CHAR * buffer, INT len);
 #define ts_sec(ts)   ((UINT)((ts & 0x1f) * 2))
 
 
-#endif /* __unace_h */
+/* ------------------------------------------------------------------------ */
+/*      Global variable definitions                                         */
+/* ------------------------------------------------------------------------ */
+
+//-------- header buffer and pointers
+extern thead head;
+extern tmhead *t_mhead;
+extern tfhead *t_fhead;
+
+//-------- buffers
+extern ULONG *buf_rd ;
+extern CHAR  *buf    ;
+extern CHAR  *buf_wr ;
+extern UCHAR *readbuf;
+
+//-------- decompressor variables
+extern SHORT rpos          ;
+extern SHORT dcpr_do       ;
+extern SHORT dcpr_do_max   ;
+extern SHORT blocksize     ;
+extern SHORT dcpr_dic      ;
+extern SHORT dcpr_oldnum   ;
+extern SHORT bits_rd       ;
+extern SHORT dcpr_frst_file;
+
+extern USHORT dcpr_code_mn[1 << maxwd_mn];
+extern USHORT dcpr_code_lg[1 << maxwd_lg];
+extern UCHAR dcpr_wd_mn[maxcode + 2];
+extern UCHAR dcpr_wd_lg[maxcode + 2];
+extern UCHAR wd_svwd[svwd_cnt];
+
+extern ULONG dcpr_dpos      ;
+extern ULONG cpr_dpos2      ;
+extern ULONG dcpr_dicsiz    ;
+extern ULONG dcpr_dican     ;
+extern ULONG dcpr_size      ;
+extern ULONG dcpr_olddist[4];
+extern ULONG code_rd        ;
+
+extern CHAR *dcpr_text      ;
+
+//-------- quicksort
+extern USHORT sort_org[maxcode + 2];
+extern UCHAR sort_freq[(maxcode + 2) * 2];
+
+//-------- file handling
+extern CHAR aname[PATH_MAX];
+extern FILE * archive_fp;
+extern FILE * outfile_fp;
+extern LONG skipsize;
+
+//-------- structures for archive handling
+extern struct tadat adat;
+
+//-------- flags
+extern INT f_err     ;
+extern INT f_err_crc ;
+extern INT f_ovrall  ;
+extern INT f_ovrnvr  ;
+extern INT f_curpas  ;
+extern INT f_criterr ;
+
+
+/* ------------------------------------------------------------------------ */
+/*                uac.c / uac_dcpr.c                                        */
+/* ------------------------------------------------------------------------ */
+
+/* comment */
+extern INT  comm_cpr_size;
+extern UCHAR *comm;
+void comment_out(const CHAR *top);
+
+/* crc */
+#define CRC_MASK 0xFFFFFFFFL
+extern ULONG rd_crc;
+ULONG getcrc(ULONG crc, UCHAR * addr, INT len);
+void  make_crctable(void);
+
+/* uac_dcpr.c - decompression */
+void dcpr_comm(INT comm_size);
+void dcpr_init(void);
+INT  dcpr_adds_blk(CHAR * buf, UINT len);
+void dcpr_init_file(void);
+
+/* file creation */
+INT  wrask(const CHAR * s);
+void ace_fname (CHAR * out_s, thead * head, INT nopath, unsigned int size, INT extract);
+FILE * create_dest_file (CHAR * file, INT a);
+
+
+#endif /* __UNACE_H__ */
 

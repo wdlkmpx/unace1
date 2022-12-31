@@ -5,7 +5,7 @@
 #ifndef __acestruc_h
 #define __acestruc_h
 
-#include "declare.h"
+//#include "declare.h"
 
 #define acesign        "**ACE**"
 #define acesign_len           7

@@ -25,14 +25,6 @@ typedef unsigned       UINT  ;
 typedef int            INT   ;
 
 
-#if defined(_WIN32)
-  #define DIRSEP '\\'
-#else
-  #define UNIX 1
-  #define DIRSEP '/'
-#endif
-
-
 /* GENERIC: Convert to LONG or WORD from BYTE-Pointer-to-LOHI-byte-order data,
  *          without worrying if the bytes are word alined in memory.
  *  p is a pointer to char.
