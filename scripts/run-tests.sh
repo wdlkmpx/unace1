@@ -1,13 +1,10 @@
 #!/bin/sh
 # Public domain
 
-# command to generate md5 checksums from <dirx>
-# md5sum $(find dirx -type f | sort | sed 's%\./%%') > dirx.md5
-
-# command to generate dirlist from <dirx>
-# find dirx -type d | sort | sed 's%\./%%' > dirx.dirs
-
 MWD=$(pwd)
+CHKSUM_TYPE='md5'
+WGET_IS_REQUIRED='no'
+
 TESTDIR="$HOME/.cache/unace1tests"
 #KEEP_TESTS=1
 #VERBOSE_ERRORS=1 #this is for CI
@@ -16,18 +13,19 @@ mkdir -p "${TESTDIR}"
 app="$(pwd)/src/unace1"
 appbn=$(basename $app)
 export CFLAGS="-D${appbn}_TRACE -g -O0 -ggdb3 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers"
-test_acev1_dir=${MWD}/tests
+help_param="-h"
 help_ret_code=0
 
+test_acev1_dir=${MWD}/tests
+
 # ===========================================================================
+# Generic functions
 
-ERROR_FILES=''
-add_error_file()
-{
-    ret=1
-    ERROR_FILES="$ERROR_FILES $1"
-}
+scriptdir=$(dirname "$0")
+. ${scriptdir}/functions.sh
 
+set_checksum_app
+set_wget
 
 set_wine()
 {
@@ -41,80 +39,158 @@ set_wine()
     fi
 }
 
-
-if test -z "$MD5SUM" ; then
-	if command -v md5sum 2>/dev/null ; then
-		MD5SUM='md5sum'
-	elif command -v gmd5sum 2>/dev/null ; then
-		MD5SUM='gmd5sum'
-	elif command -v md5 2>/dev/null ; then
-		MD5SUM='md5'
-	fi
-fi
-
-
-check_md5()
+check_sums_from_file()
 {
-	md5file="$1"
+	chksum_file="$1"
 	logfile="$2"
-	if test -z "$MD5SUM" || test -z "$md5file" ; then
-		return
+	if test -z "$CHKSUM_APP" || test -z "$chksum_file" ; then
+		return 0 # ok
 	fi
-	echo "------------------------------" >>${logfile}
-	if [ "$MD5SUM" = "md5" ] ; then # --BSD--
-		while read md5 file
+    if [ -n "$logfile" ] ; then
+        echo "------------------------------" >>${logfile}
+    fi
+	if [ "$CHKSUM_APP" = "$CHKSUM_BSD" ] ; then
+		# --BSD--
+		while read sum file
 		do
-			filesum=$(md5 -q "$file")
-			if [ "$md5" != "$filesum" ] ; then
+			filesum=$($CHKSUM_APP -q "$file")
+			if [ "$sum" != "$filesum" ] ; then
 				echo "${file}: FAILED"  >>${logfile}
 				echo "*** checksum failed. stopped" >>${logfile}
 				return 1 #error
 			fi
-		done < ${md5file}
-	else # --GNU--
-		if ! ${MD5SUM} -c ${md5file} >>${logfile} 2>&1 ; then
+		done < ${chksum_file}
+	else
+		# --GNU--
+		if ! ${CHKSUM_APP} -c ${chksum_file} >>${logfile} 2>&1 ; then
 			return 1 #error
 		fi
 	fi
-	echo "------------------------------" >>${logfile}
+    if [ -n "$logfile" ] ; then
+        echo "------------------------------" >>${logfile}
+    fi
 	return 0 # ok
 }
 
 
-check_dirs()
+check_dirs_from_dirlist_file()
 {
-	dirfile="$1"
+	dirlist_file="$1"
 	logfile="$2"
-	if [ -z "$dirfile" ] ; then
+	if [ -z "$dirlist_file" ] ; then
 		return 0
 	fi
-	check_dirs_ret=0
+	wret=0
 	echo "checking dirs..." >>${logfile}
 	while read dir ; do
 		if [ ! -d "$dir" ] ; then
-			check_dirs_ret=1
+			wret=1
 			echo "[ERROR] $dir is missing" >>${logfile}
 		fi
-	done < ${dirfile}
-	return ${check_dirs_ret}
+	done < ${dirlist_file}
+	return ${wret}
 }
 
+# ===========================================================================
+# Functions specific to this script
 
-check_md5_and_dirs()
+set_test_variables() # $1: <test_name> [exit_code]
 {
-	md5file="$1"
-	logfile="$2"
-	dirfile="$3"
-	if check_md5 "${md5file}" "${logfile}" &&
-		check_dirs "${dirfile}" "${logfile}" ; then
-		echo "OK"
-	else
-		echo "ERROR"
-		add_error_file ${logfile}
-	fi
+    # variables to set before calling this function:
+    # - TESTFILE_DIR
+    # - TESTFILE_EXT
+    # - TESTDIR
+    # - TEST_USE_SUBDIR [yes/no]
+    TESTFILE_NAME="$1"
+    if [ -z "$TESTFILE_NAME" ] ; then
+        echo "run_test: no test name"
+        exit 1
+    fi
+    TEST_EXIT_CODE="$2" # !XX = error code
+    #--
+    TESTFILE1=${TESTFILE_DIR}/${TESTFILE_NAME}${TESTFILE_EXT}
+    TESTFILE2=${TESTFILE_DIR}/${TESTFILE_NAME}${TESTFILE_EXT2}
+    TESTFILE=''
+    if [ -f "$TESTFILE1" ] ; then
+        TESTFILE=${TESTFILE1}
+    elif [ -f "$TESTFILE2" ] ; then
+        TESTFILE=${TESTFILE2}
+    fi
+    CHKFILE=${TESTFILE_DIR}/${TESTFILE_NAME}.${CHKSUM_TYPE}
+    DIRFILE=${TESTFILE_DIR}/${TESTFILE_NAME}.dirs
+    LOGFILE=${TESTDIR}/${TESTFILE_NAME}.log
+    #--
+    if [ -z "$TESTFILE" ] ; then
+        echo "ERROR: $TESTFILE1 doesn't exist "
+        echo "TEST = ${TESTFILE_NAME}"
+        echo "Fix the script!"
+        exit 1
+    fi
+    if [ ! -f "${CHKFILE}" ] ; then
+        unset CHKFILE
+    fi
+    if [ ! -f "${DIRFILE}" ] ; then
+        unset DIRFILE
+    fi
 }
 
-echo
+gdbargs=''
+if command -v gdb >/dev/null ; then
+    gdbargs='gdb --args'
+fi
+
+ERROR_FILES=''
+
+run_test()
+{
+    test_error=
+    printf "* [test] ${TESTFILE_NAME}${TESTFILE_EXT}: "
+    echo >${LOGFILE}
+    echo "------------------------------------" >>${LOGFILE}
+    echo "${gdbargs} $@" >>${LOGFILE}
+    echo "------------------------------------" >>${LOGFILE}
+    if [ "$TEST_USE_SUBDIR" = "yes" ] ; then
+        xcurdirx=$(pwd)
+        mkdir -p ${TESTDIR}/${TESTFILE_NAME}_test
+        cd ${TESTDIR}/${TESTFILE_NAME}_test
+    fi
+    "$@" >>${LOGFILE} 2>&1
+    exit_code=$?
+    if [ -n "$TEST_EXIT_CODE" ] ; then
+        case ${TEST_EXIT_CODE} in
+        !*)
+            if [ "!${exit_code}" = "${TEST_EXIT_CODE}" ] ; then
+                echo "[ERROR] Exit code  = ${exit_code}" >>${LOGFILE}
+                test_error=1
+            fi
+            ;;
+        *)
+            if [ "${exit_code}" = "${TEST_EXIT_CODE}" ] ; then
+                echo "[OK] Exit code = ${exit_code}" >>${LOGFILE}
+            else
+                echo "[ERROR] Exit code  = ${exit_code}" >>${LOGFILE}
+                echo "Expected exit code = ${valid_exit_code}" >>${LOGFILE}
+                test_error=1
+            fi
+            ;;
+        esac
+    fi
+    if ! check_sums_from_file "${CHKFILE}" "${LOGFILE}" ; then
+        test_error=1
+    fi
+    if ! check_dirs_from_dirlist_file "${DIRFILE}" "${LOGFILE}" ; then
+        test_error=1
+    fi
+    if [ -z "$test_error" ] ; then
+        echo "OK"
+    else
+        echo "ERROR"
+        ERROR_FILES="$ERROR_FILES $1"
+    fi
+    if [ "$TEST_USE_SUBDIR" = "yes" ] ; then
+        cd "${xcurdirx}"
+    fi
+}
 
 # ===========================================================================
 
@@ -149,118 +225,52 @@ else
 fi
 
 # basic check
-expected_ret=${help_ret_code}
-${app} -h >/dev/null
-iret=$?
-if [ ${iret} -ne ${expected_ret} ] ; then
-    echo "Something is wrong with $app"
-    echo "Got code $iret (expected ${expected_ret})"
-    echo "Aborted"
-    exit 1
-fi
+check_app_help ${help_ret_code} "${app} ${help_param}"
 
 # ===========================================================================
-
-cmdecho()
-{
-    gdbargs=''
-    if command -v gdb >/dev/null ; then
-        gdbargs='gdb --args'
-    fi
-    echo "------------------------------------"
-    echo "${gdbargs} $@"
-    echo "------------------------------------"
-    "$@"
-}
 
 cd ${TESTDIR}
 
-ret=0
+TESTFILE_DIR=${test_acev1_dir}
+TESTFILE_EXT='.ace'
+TESTFILE_EXT2='.ACE'
+TEST_USE_SUBDIR='no'
 
-ACEFILE=${test_acev1_dir}/dirtraversal1.ace
-MD5FILE=
-LOGFILE=${TESTDIR}/dirtraversal1.log
-echo
-printf "* tests/${ACEFILE##*/}: "
-cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
-if [ $? -eq 7 ] ; then
-	echo "OK"
-else
-	echo "ERROR"
-	add_error_file ${LOGFILE}
-fi
+set_test_variables 'dirtraversal1' 7
+run_test ${app} x -y ${TESTFILE}
 
-ACEFILE=${test_acev1_dir}/dirtraversal2.ace
-MD5FILE=
-LOGFILE=${TESTDIR}/dirtraversal2.log
-printf "* tests/${ACEFILE##*/}: "
-cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
-if [ $? -eq 7 ] ; then
-	echo "OK"
-else
-	echo "ERROR"
-	add_error_file ${LOGFILE}
-fi
+set_test_variables 'dirtraversal2' 7
+run_test ${app} x -y ${TESTFILE}
 
-ACEFILE=${test_acev1_dir}/out_of_bounds.ace
-MD5FILE=
-LOGFILE=${TESTDIR}/out_of_bounds.log
-printf "* tests/out_of_bounds.ace: "
-cmdecho ${app} t ${ACEFILE} >${LOGFILE} 2>&1
-if grep 'fault' ${LOGFILE} ; then
-	echo "ERROR"
-	add_error_file ${LOGFILE}
-else
-	echo "OK"
-fi
+set_test_variables 'out_of_bounds' "!139" # 139 = segfault
+run_test ${app} t ${TESTFILE}
 
-ACEFILE=${test_acev1_dir}/onefile.ace
-MD5FILE=${test_acev1_dir}/onefile.md5
-LOGFILE=${TESTDIR}/onefile.log
-printf "* tests/${ACEFILE##*/}: "
+set_test_variables 'onefile'
 rm -f CHANGES.LOG
-cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
-check_md5_and_dirs ${MD5FILE} ${LOGFILE}
+run_test ${app} x -y ${TESTFILE}
 
-## unace1 doesn't support password protected archives
-#ACEFILE=${test_acev1_dir}/passwd.ace
-#MD5FILE=${test_acev1_dir}/passwd.md5
-#LOGFILE=${TESTDIR}/passwd.log
-#printf "* tests/${ACEFILE##*/}: "
+#set_test_variables 'passwd'
 #rm -f passwd.m4
-#cmdecho ${app} x -y -p1234 ${ACEFILE} >${LOGFILE} 2>&1
-#check_md5_and_dirs ${MD5FILE} ${LOGFILE}
+#run_test ${app} x -y -p1234 ${TESTFILE}
 
-ACEFILE=${test_acev1_dir}/ZGFX2.ace
-MD5FILE=${test_acev1_dir}/ZGFX2.md5
-DIRFILE=${test_acev1_dir}/ZGFX2.dirs
-LOGFILE=${TESTDIR}/ZGFX2.log
-printf "* tests/${ACEFILE##*/}: "
+set_test_variables 'ZGFX2'
 rm -rf ZGFX2
-cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
-check_md5_and_dirs  ${MD5FILE} ${LOGFILE} ${DIRFILE}
+run_test ${app} x -y ${TESTFILE}
 
-ACEFILE=${test_acev1_dir}/zdir.ace
-MD5FILE=${test_acev1_dir}/zdir.md5
-DIRFILE=${test_acev1_dir}/zdir.dirs
-LOGFILE=${TESTDIR}/zdir.log
-printf "* tests/${ACEFILE##*/}: "
+set_test_variables 'zdir'
 rm -rf zman
-cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
-check_md5_and_dirs  ${MD5FILE} ${LOGFILE} ${DIRFILE}
+run_test ${app} x -y ${TESTFILE}
 
-ACEFILE=${test_acev1_dir}/multivolume.ace
-MD5FILE=${test_acev1_dir}/multivolume.md5
-LOGFILE=${TESTDIR}/multivolume.log
-printf "* tests/${ACEFILE##*/}: "
+set_test_variables 'multivolume'
 rm -rf aclocal
-cmdecho ${app} x -y ${ACEFILE} >${LOGFILE} 2>&1
-check_md5_and_dirs ${MD5FILE} ${LOGFILE}
+run_test ${app} x -y ${TESTFILE}
 
 # ===========================================================================
 
-if [ $ret != 0 ] ; then
+ret=0
+if [ -n "$(echo $ERROR_FILES)" ] ; then
     KEEP_TESTS=1 # errors, need logs
+    ret=1
     if [ -n "$VERBOSE_ERRORS" ] ; then
         cat $ERROR_FILES
     fi
@@ -269,7 +279,7 @@ fi
 if test -z "$KEEP_TESTS" ; then
 	rm -rf ${TESTDIR}
 else
-	printf "\n\n.......................................\n"
+	printf "\n.......................................\n"
 	printf " Logs are in $TESTDIR\n"
 	printf ".......................................\n\n"
 fi
