@@ -9,3 +9,4 @@ config.h
 config.mk
 config.log
 config.sh
+0mtrace_*

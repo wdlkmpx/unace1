@@ -17,7 +17,7 @@
   #include <unistd.h>
   #include <errno.h>
 #endif
-#if defined(unace1_TRACE) && defined(__GLIBC__)
+#if defined(W_MTRACE) && defined(__GLIBC__)
   #include <mcheck.h>
 #endif
 
@@ -537,7 +537,7 @@ void showhelp(void)
 int main(INT argc, CHAR * argv[])              // processes the archive
 {
 
-#if defined(unace1_TRACE) && defined(__GLIBC__)
+#if defined(W_MTRACE) && defined(__GLIBC__)
    mtrace();
 #endif
 
