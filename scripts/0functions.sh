@@ -1,7 +1,11 @@
 #!/bin/sh
 # Public domain
 #
-# misc functions to be used by misc scripts...
+# Variables that can be exported and will be used here:
+# - CHKSUM_TYPE
+# - CHKSUM_APP
+# - DOWNLOAD_APP (this include extra params so download_file() works)
+# - DOWNLOAD_IS_REQUIRED [yes/no]
 #
 
 set_checksum_app() # $1:[$CHKSUM_TYPE]
@@ -35,20 +39,20 @@ set_checksum_app() # $1:[$CHKSUM_TYPE]
 }
 
 
-set_wget()
+set_download_app()
 {
-    if test -n "$XWGET" ; then
+    if test -n "$DOWNLOAD_APP" ; then
         return # already set
     fi
     if command -v curl ; then
-        export XWGET='curl -sSL -o'
+        export DOWNLOAD_APP='curl -sSL -o'
     elif command -v wget ; then
-        export XWGET='wget -q --no-check-certificate -O'
+        export DOWNLOAD_APP='wget -q --no-check-certificate -O'
     elif command -v fetch ; then # FreeBSD
-        export XWGET='fetch -q --no-verify-peer -o'
+        export DOWNLOAD_APP='fetch -q --no-verify-peer -o'
     else
         echo "Cannot find curl/wget/fetch.."
-        if [ -n "$WGET_IS_REQUIRED" = "yes" ] ; then
+        if [ "$DOWNLOAD_IS_REQUIRED" = "yes" ] ; then
             exit 1
         fi
     fi
@@ -57,17 +61,19 @@ set_wget()
 
 download_file() # $1:<url> [outfile]
 {
-    if test -z "$XWGET" ; then
-        return
-    fi
     dlurl="$1"
     dlfile="$2"
     if [ -z "$dlfile" ] ; then
         dlfile=$(basename "$dlurl")
     fi
     if ! [ -f "${dlfile}" ] ; then
-        echo "# ${XWGET} \"${dlfile}\" \"${dlurl}\""
-        ${XWGET} "${dlfile}" "${dlurl}"
+        if [ -z "$DOWNLOAD_APP" ] && [ "$DOWNLOAD_IS_REQUIRED" = "yes" ] ; then
+            # only trigger this error if file is missing
+            echo "\$DOWNLOAD_APP has not been set"
+            exit 1
+        fi
+        echo "# ${DOWNLOAD_APP} \"${dlfile}\" \"${dlurl}\""
+        ${DOWNLOAD_APP} "${dlfile}" "${dlurl}"
         if [ $? -ne 0 ] ; then
             echo "Could not download file" >&2
             rm -f "${dlfile}"

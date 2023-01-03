@@ -1,31 +1,37 @@
 #!/bin/sh
 # Public domain
 
-MWD=$(pwd)
-CHKSUM_TYPE='md5'
-WGET_IS_REQUIRED='no'
+if [ -z "$RUN_TESTS_CFG" ] ; then
+    scriptdir=$(dirname "$0")
+    RUN_TESTS_CFG=${scriptdir}/run-tests.cfg
+fi
+if [ "$1" = "-cfg" ] ; then
+    RUN_TESTS_CFG=$(realpath "$2")
+    shift 2
+fi
+if [ -z "$RUN_TESTS_CFG" ] ; then
+    help 1
+fi
 
-TESTDIR="$HOME/.cache/unace1tests"
-#KEEP_TESTS=1
-#VERBOSE_ERRORS=1 #this is for CI
-mkdir -p "${TESTDIR}"
+. ${RUN_TESTS_CFG} || exit 1
 
-app="$(pwd)/src/unace1"
-appbn=$(basename $app)
-export CFLAGS="-D${appbn}_TRACE -g -O0 -ggdb3 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers"
-help_param="-h"
-help_ret_code=0
+REBUILD=no
+case $1 in
+    -rebuild) REBUILD=yes ;;
+    -run)     REBUILD=no ;;
+    #*) help 0 ;;
+esac
 
-test_acev1_dir=${MWD}/tests
+export CFLAGS="-DW_MTRACE -g -O0 -ggdb3 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers"
 
 # ===========================================================================
-# Generic functions
+# Functions
 
 scriptdir=$(dirname "$0")
-. ${scriptdir}/functions.sh
+. ${scriptdir}/0functions.sh
 
 set_checksum_app
-set_wget
+set_download_app
 
 set_wine()
 {
@@ -39,6 +45,7 @@ set_wine()
     fi
 }
 
+
 check_sums_from_file()
 {
 	chksum_file="$1"
@@ -46,10 +53,8 @@ check_sums_from_file()
 	if test -z "$CHKSUM_APP" || test -z "$chksum_file" ; then
 		return 0 # ok
 	fi
-    if [ -n "$logfile" ] ; then
-        echo "------------------------------" >>${logfile}
-    fi
-	if [ "$CHKSUM_APP" = "$CHKSUM_BSD" ] ; then
+	echo "------------------------------" >>${logfile}
+ 	if [ "$CHKSUM_APP" = "$CHKSUM_BSD" ] ; then
 		# --BSD--
 		while read sum file
 		do
@@ -66,9 +71,7 @@ check_sums_from_file()
 			return 1 #error
 		fi
 	fi
-    if [ -n "$logfile" ] ; then
-        echo "------------------------------" >>${logfile}
-    fi
+	echo "------------------------------" >>${logfile}
 	return 0 # ok
 }
 
@@ -91,68 +94,53 @@ check_dirs_from_dirlist_file()
 	return ${wret}
 }
 
-# ===========================================================================
-# Functions specific to this script
-
-set_test_variables() # $1: <test_name> [exit_code]
-{
-    # variables to set before calling this function:
-    # - TESTFILE_DIR
-    # - TESTFILE_EXT
-    # - TESTDIR
-    # - TEST_USE_SUBDIR [yes/no]
-    TESTFILE_NAME="$1"
-    if [ -z "$TESTFILE_NAME" ] ; then
-        echo "run_test: no test name"
-        exit 1
-    fi
-    TEST_EXIT_CODE="$2" # !XX = error code
-    #--
-    TESTFILE1=${TESTFILE_DIR}/${TESTFILE_NAME}${TESTFILE_EXT}
-    TESTFILE2=${TESTFILE_DIR}/${TESTFILE_NAME}${TESTFILE_EXT2}
-    TESTFILE=''
-    if [ -f "$TESTFILE1" ] ; then
-        TESTFILE=${TESTFILE1}
-    elif [ -f "$TESTFILE2" ] ; then
-        TESTFILE=${TESTFILE2}
-    fi
-    CHKFILE=${TESTFILE_DIR}/${TESTFILE_NAME}.${CHKSUM_TYPE}
-    DIRFILE=${TESTFILE_DIR}/${TESTFILE_NAME}.dirs
-    LOGFILE=${TESTDIR}/${TESTFILE_NAME}.log
-    #--
-    if [ -z "$TESTFILE" ] ; then
-        echo "ERROR: $TESTFILE1 doesn't exist "
-        echo "TEST = ${TESTFILE_NAME}"
-        echo "Fix the script!"
-        exit 1
-    fi
-    if [ ! -f "${CHKFILE}" ] ; then
-        unset CHKFILE
-    fi
-    if [ ! -f "${DIRFILE}" ] ; then
-        unset DIRFILE
-    fi
-}
 
 gdbargs=''
 if command -v gdb >/dev/null ; then
     gdbargs='gdb --args'
 fi
 
-ERROR_FILES=''
+ERROR_LOG_FILES=''
 
 run_test()
 {
+    unset CHKFILE DIRFILE LOGFILE
+    if [ -z "$TEST_FILE" ] ; then
+        echo "** a \$TEST_FILE is required for run_test()"
+        echo "** fix the script!"
+        exit 1
+    fi
+    #--
+    if [ -n "$TEST_FILE_URL" ] ; then
+        download_file "$TEST_FILE_URL" "$TEST_FILE"
+        unset TEST_FILE_URL
+    fi
+    #--
+    if ! [ -f "$TEST_FILE" ] ; then
+        echo "** $TEST_FILE doesn't exist .. fix the script"
+        exit 1
+    fi
+    TEST_FILE_NAME=$(basename "$TEST_FILE")
+    if [ -f ${TEST_FILE}.${CHKSUM_TYPE} ] ; then
+        CHKFILE=${TEST_FILE}.${CHKSUM_TYPE}
+    fi
+    if [ -f ${TEST_FILE}.dirs ] ; then
+        DIRFILE=${TEST_FILE}.dirs
+    fi
+    LOGFILE=${TESTDIR}/${TEST_FILE_NAME}.log
+    #--
     test_error=
-    printf "* [test] ${TESTFILE_NAME}${TESTFILE_EXT}: "
+    #--
+    printf "* [test] ${TEST_FILE_NAME}: "
     echo >${LOGFILE}
     echo "------------------------------------" >>${LOGFILE}
     echo "${gdbargs} $@" >>${LOGFILE}
     echo "------------------------------------" >>${LOGFILE}
     if [ "$TEST_USE_SUBDIR" = "yes" ] ; then
         xcurdirx=$(pwd)
-        mkdir -p ${TESTDIR}/${TESTFILE_NAME}_test
-        cd ${TESTDIR}/${TESTFILE_NAME}_test
+        rm -rf ${TESTDIR}/${TEST_FILE_NAME}_test
+        mkdir -p ${TESTDIR}/${TEST_FILE_NAME}_test
+        cd ${TESTDIR}/${TEST_FILE_NAME}_test
     fi
     "$@" >>${LOGFILE} 2>&1
     exit_code=$?
@@ -169,11 +157,17 @@ run_test()
                 echo "[OK] Exit code = ${exit_code}" >>${LOGFILE}
             else
                 echo "[ERROR] Exit code  = ${exit_code}" >>${LOGFILE}
-                echo "Expected exit code = ${valid_exit_code}" >>${LOGFILE}
+                echo "Expected exit code = ${TEST_EXIT_CODE}" >>${LOGFILE}
                 test_error=1
             fi
             ;;
         esac
+    fi
+    if [ -n "$TEST_ERROR_FILE" ] ; then
+        if [ -e "$TEST_ERROR_FILE" ] ; then
+            echo "[ERROR] $TEST_ERROR_FILE exists" >>${LOGFILE}
+            test_error=1
+        fi
     fi
     if ! check_sums_from_file "${CHKFILE}" "${LOGFILE}" ; then
         test_error=1
@@ -185,43 +179,39 @@ run_test()
         echo "OK"
     else
         echo "ERROR"
-        ERROR_FILES="$ERROR_FILES $1"
+        ERROR_LOG_FILES="$ERROR_LOG_FILES $1"
     fi
     if [ "$TEST_USE_SUBDIR" = "yes" ] ; then
         cd "${xcurdirx}"
     fi
+    unset TEST_FILE TEST_ERROR_FILE TEST_EXIT_CODE
 }
 
 # ===========================================================================
 
-if ! test -f configure ; then
-	if test -f autogen.sh ; then
-		./autogen.sh
-	fi
+if [ -f autogen.sh ] && [ ! -f configure ] ; then
+    ./autogen.sh
 fi
 
-if test -f configure ; then
-	if ! test -f config.h ; then
-		./configure ${configure_opts}
-	fi
+if [ -f configure ] && [ ! -f config.log ] ; then
+    ./configure ${configure_opts}
 fi
 
-if test -f ${app}.exe ; then
-	# .exe binary
-	set_wine
-	app="${wine} ${app}"
-elif test -f ${app} ; then
-	app="${app}"
-else
-	if test -f Makefile ; then
-		${make_clean}
-		make
-	fi
+if [ -f Makefile ] ; then
+    if [ "$REBUILD" = "yes" ] ; then
+        ${make_clean}
+    fi
+    ${make_cmd}
+fi
 
-	if ! test -f ${app} ; then
-		echo "$app not found"
-		exit 1
-	fi
+if [ -f ${app}.exe ] ; then # .exe binary
+    set_wine
+    app="${wine} ${app}"
+fi
+
+if ! test -f ${app} ; then
+    echo "$app not found"
+    exit 1
 fi
 
 # basic check
@@ -229,59 +219,28 @@ check_app_help ${help_ret_code} "${app} ${help_param}"
 
 # ===========================================================================
 
+echo
+appname=$(basename "$app")
+TESTDIR=$(pwd)/0runtests_${appname}
+rm -rf "${TESTDIR}"
+mkdir -p "${TESTDIR}"
 cd ${TESTDIR}
 
-TESTFILE_DIR=${test_acev1_dir}
-TESTFILE_EXT='.ace'
-TESTFILE_EXT2='.ACE'
-TEST_USE_SUBDIR='no'
-
-set_test_variables 'dirtraversal1' 7
-run_test ${app} x -y ${TESTFILE}
-
-set_test_variables 'dirtraversal2' 7
-run_test ${app} x -y ${TESTFILE}
-
-set_test_variables 'out_of_bounds' "!139" # 139 = segfault
-run_test ${app} t ${TESTFILE}
-
-set_test_variables 'onefile'
-rm -f CHANGES.LOG
-run_test ${app} x -y ${TESTFILE}
-
-#set_test_variables 'passwd'
-#rm -f passwd.m4
-#run_test ${app} x -y -p1234 ${TESTFILE}
-
-set_test_variables 'ZGFX2'
-rm -rf ZGFX2
-run_test ${app} x -y ${TESTFILE}
-
-set_test_variables 'zdir'
-rm -rf zman
-run_test ${app} x -y ${TESTFILE}
-
-set_test_variables 'multivolume'
-rm -rf aclocal
-run_test ${app} x -y ${TESTFILE}
+run_tests
 
 # ===========================================================================
 
 ret=0
-if [ -n "$(echo $ERROR_FILES)" ] ; then
-    KEEP_TESTS=1 # errors, need logs
+
+if [ -n "$(echo $ERROR_LOG_FILES)" ] ; then
     ret=1
     if [ -n "$VERBOSE_ERRORS" ] ; then
-        cat $ERROR_FILES
+        cat $ERROR_LOG_FILES
     fi
 fi
 
-if test -z "$KEEP_TESTS" ; then
-	rm -rf ${TESTDIR}
-else
-	printf "\n.......................................\n"
-	printf " Logs are in $TESTDIR\n"
-	printf ".......................................\n\n"
-fi
+printf "\n Logs are in $TESTDIR\n"
+echo "   (that dir is deleted and created everytime the tests are run)"
+echo
 
 exit $ret
