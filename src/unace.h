@@ -6,12 +6,17 @@
 #ifndef __UNACE_H__
 #define __UNACE_H__
 
+#ifdef _WIN32
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "declare.h"
-#include "acestruc.h"
+#include "wintypes.h"
+#include "w_endian.h"
 
 #if defined(_WIN32)
   #define DIRSEP '\\'
@@ -19,6 +24,30 @@
   #define UNIX 1
   #define DIRSEP '/'
 #endif
+
+/* GENERIC: Convert to LONG or WORD from BYTE-Pointer-to-LOHI-byte-order data,
+ *          without worrying if the bytes are word alined in memory.
+ *  p is a pointer to char.
+ */
+#ifdef WORDS_BIGENDIAN
+#define WORDswap(n)  (*(n) = (*(n) << 8) | (*(n) >> 8))
+#define LONGswap(n)  ( WORDswap(&((SHORT *)(n))[0]),\
+                       WORDswap(&((SHORT *)(n))[1]),\
+                       *(n) = (*(n) >> 16) | (*(n) << 16) )
+#define BUFP2WORD(p) ((SHORT)*(p)++ | ((*(p)++)<<8))
+#define BUFP2LONG(p) ((ULONG)*(p)++ | ((*(p)++)<<8) | ((*(p)++)<<16) | ((*(p)++)<<24))
+#define BUF2WORD(p) ((SHORT)*(p) | (*((p)+1)<<8))
+#define BUF2LONG(p) ((ULONG)*(p) | (*((p)+1)<<8) | (*((p)+2)<<16) | (*((p)+3)<<24))
+
+#else /* little endian */
+#define BUFP2WORD(p) *(SHORT*)((p+=2)-2)
+#define BUFP2LONG(p) *(ULONG*)((p+=4)-4)
+#define BUF2WORD(p) (*(SHORT*)p)
+#define BUF2LONG(p) (*(ULONG*)p)
+
+#endif /* WORDS_BIGENDIAN */
+
+#include "acestruc.h"
 
 //--------- functions
 INT read_adds_blk(CHAR * buffer, INT len);
