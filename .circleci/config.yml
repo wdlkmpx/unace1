@@ -1,0 +1,61 @@
+# https://github.com/rokoDev/rabbit/blob/master/.circleci/config.yml
+#    https://discuss.circleci.com/t/is-it-possible-to-build-and-test-my-project-in-docker-container-with-s390x-architecture/44077
+# https://circleci.com/docs/variables/
+
+# Installing packages takes too long, use rokoDev's docker
+
+# These (and other) variables are wrong when using GitLab:
+# CIRCLE_REPOSITORY_URL  : empty
+# CIRCLE_PROJECT_USERNAME: wrong
+# CIRCLE_PROJECT_REPONAME: wrong
+
+version: 2.1
+
+jobs:
+  ubuntu_s390x:
+    machine:
+      image: ubuntu-2004:current
+#    resource_class: large
+    environment:
+      DOCKER_BUILDKIT: 1
+    steps:
+      - run: printenv
+      - run:
+          name: Enable run containers with different architectures
+          command: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      - run:
+          name: Run docker container for s390x
+          command: docker run -it -d --platform linux/s390x --name ubuntu_z rokodev/ubuntu2204-dev:1.0
+#          command: docker run -it -d --platform linux/s390x --name ubuntu_z s390x/ubuntu
+#      - run:
+#          name: "Install deps"
+#          command: docker exec -it ubuntu_z bash -c "(
+#                        set -ex;
+#                        apt update;
+#                        apt upgrade -y;
+#                        apt-get install -y git build-essential gdb;
+#                        )"
+      - run:
+          name: "checkout sources"
+          command: |
+            CIRCLE_REPOSITORY_URL='https://gitlab.com/wdlkmpx/unace1'
+            docker exec -it ubuntu_z bash -c "set -x; git clone --depth 1 --branch ${CIRCLE_BRANCH} ${CIRCLE_REPOSITORY_URL}"
+      - run:
+          name: Configure, build and test app
+          command: |
+            CIRCLE_PROJECT_REPONAME='unace1'
+            docker exec -it ubuntu_z bash -c "(
+                        set -ex;
+                        pwd;
+                        cd ${CIRCLE_PROJECT_REPONAME};
+                        ./scripts/test_ci.sh;
+                        )"
+
+workflows:
+  build_and_test:
+    jobs:
+      - ubuntu_s390x:
+          filters:
+            branches:
+              only:
+                - master
