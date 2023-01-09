@@ -1,15 +1,18 @@
 #!/bin/sh
 # Public domain
 
-scriptdir=$(dirname "$0")
-scriptdir=$(readlink -f "$scriptdir")
+scdir=$(dirname "$0")
+. ${scdir}/0functions.sh
+
+scriptdir=$(wrealpath "$scdir")
+
 w_system=$(uname -s)
 
 if [ -z "$RUN_TESTS_CFG" ] ; then
     RUN_TESTS_CFG=${scriptdir}/run-tests.cfg
 fi
 if [ "$1" = "-cfg" ] ; then
-    RUN_TESTS_CFG=$(realpath "$2")
+    RUN_TESTS_CFG=$(wrealpath "$2")
     shift 2
 fi
 if [ -z "$RUN_TESTS_CFG" ] ; then
@@ -34,8 +37,6 @@ fi
 
 # ===========================================================================
 # Functions
-
-. ${scriptdir}/0functions.sh
 
 set_checksum_app
 set_download_app
