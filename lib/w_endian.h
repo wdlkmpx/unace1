@@ -39,7 +39,7 @@ extern "C" {
 #   include <sys/endian.h>
 
 #elif defined(sun) || defined(__sun)
-#  include <sys/byteorder.h>
+#   include <sys/byteorder.h>
 #   define bswap16(x) BSWAP_16(x)
 #   define bswap32(x) BSWAP_32(x)
 #   define bswap64(x) BSWAP_64(x)
@@ -73,6 +73,20 @@ extern "C" {
 #       define bswap16(x) __builtin_bswap16(x)
 #       define bswap32(x) __builtin_bswap32(x)
 #       define bswap64(x) __builtin_bswap64(x)
+#   else //--
+#       define bswap16(x) ((uint16_t)(x) << 8) | ((uint16_t)(x) >> 8)
+#       define bswap32(x) \
+         ((((uint32_t)(x) & 0xff000000) >> 24) | (((uint32_t)(x) & 0x00ff0000) >>  8) | \
+          (((uint32_t)(x) & 0x0000ff00) <<  8) | (((uint32_t)(x) & 0x000000ff) << 24))
+#       define bswap64(x) \
+         ((((uint64_t)(x) & 0xff00000000000000ull) >> 56) \
+        | (((uint64_t)(x) & 0x00ff000000000000ull) >> 40) \
+        | (((uint64_t)(x) & 0x0000ff0000000000ull) >> 24) \
+        | (((uint64_t)(x) & 0x000000ff00000000ull) >> 8) \
+        | (((uint64_t)(x) & 0x00000000ff000000ull) << 8) \
+        | (((uint64_t)(x) & 0x0000000000ff0000ull) << 24) \
+        | (((uint64_t)(x) & 0x000000000000ff00ull) << 40) \
+        | (((uint64_t)(x) & 0x00000000000000ffull) << 56))
 #   endif
 #endif
 
