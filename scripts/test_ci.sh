@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#RUN_TEST_SCRIPT_DIRECTLY=1
+
 w_system=$(uname -s)
 
 if [ "$1" = "freebsd" ] ; then
@@ -65,10 +67,15 @@ esac
 # ============================================
 
 #export CFLAGS="-DDEBUG_W_ENDIAN"
-export VERBOSE_ERRORS=1 # the test script read this
+export VERBOSE_ERRORS='yes' # the test script read this
+#export PRINT_SUM_ON_ERROR='yes'
+#exprt DOWNLOAD_IS_REQUIRED='yes'
 
-cmdecho ./configure  || exit_error
-cmdecho make         || exit_error
-cmdecho make check   || exit_error
-#cmdecho make install || exit_error
-
+if [ "$RUN_TEST_SCRIPT_DIRECTLY" ] ; then
+    cmdecho ./scripts/run-tests.sh -debug || exit_error
+else
+    cmdecho ./configure  || exit_error
+    cmdecho make         || exit_error
+    cmdecho make check   || exit_error
+    #cmdecho make install || exit_error
+fi
