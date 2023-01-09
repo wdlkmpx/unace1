@@ -1,7 +1,6 @@
 /* ------------------------------------------------------------------------ */
 /*  ML - 01/2004: changed licence to GPL                                    */
 /* ------------------------------------------------------------------------ */  
-// only include this header
 
 #ifndef __UNACE_H__
 #define __UNACE_H__
@@ -25,11 +24,8 @@
   #define DIRSEP '/'
 #endif
 
-/* GENERIC: Convert to LONG or WORD from BYTE-Pointer-to-LOHI-byte-order data,
- *          without worrying if the bytes are word alined in memory.
- *  p is a pointer to char.
- */
-#ifdef WORDS_BIGENDIAN
+// The ACE format is Little Endian
+#ifdef WORDS_BIGENDIAN /* big endian */
 #define BUFP2WORD(p) (bswap16(*(USHORT*) ((p+=2)-2)))
 #define BUFP2LONG(p) (bswap32(*(ULONG*) ((p+=4)-4)))
 #define BUF2WORD(p) (bswap16(*(USHORT*)(p)))
