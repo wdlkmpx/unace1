@@ -30,21 +30,15 @@
  *  p is a pointer to char.
  */
 #ifdef WORDS_BIGENDIAN
-#define WORDswap(n)  (*(n) = (*(n) << 8) | (*(n) >> 8))
-#define LONGswap(n)  ( WORDswap(&((SHORT *)(n))[0]),\
-                       WORDswap(&((SHORT *)(n))[1]),\
-                       *(n) = (*(n) >> 16) | (*(n) << 16) )
-#define BUFP2WORD(p) ((SHORT)*(p)++ | ((*(p)++)<<8))
-#define BUFP2LONG(p) ((ULONG)*(p)++ | ((*(p)++)<<8) | ((*(p)++)<<16) | ((*(p)++)<<24))
-#define BUF2WORD(p) ((SHORT)*(p) | (*((p)+1)<<8))
-#define BUF2LONG(p) ((ULONG)*(p) | (*((p)+1)<<8) | (*((p)+2)<<16) | (*((p)+3)<<24))
-
+#define BUFP2WORD(p) (bswap16(*(USHORT*) ((p+=2)-2)))
+#define BUFP2LONG(p) (bswap32(*(ULONG*) ((p+=4)-4)))
+#define BUF2WORD(p) (bswap16(*(USHORT*)(p)))
+#define BUF2LONG(p) (bswap32(*(ULONG*)(p)))
 #else /* little endian */
-#define BUFP2WORD(p) *(SHORT*)((p+=2)-2)
-#define BUFP2LONG(p) *(ULONG*)((p+=4)-4)
-#define BUF2WORD(p) (*(SHORT*)p)
+#define BUFP2WORD(p) (*(USHORT*) ((p+=2)-2))
+#define BUFP2LONG(p) (*(ULONG*) ((p+=4)-4))
+#define BUF2WORD(p) (*(USHORT*)p)
 #define BUF2LONG(p) (*(ULONG*)p)
-
 #endif /* WORDS_BIGENDIAN */
 
 #include "acestruc.h"

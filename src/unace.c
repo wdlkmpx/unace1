@@ -145,8 +145,8 @@ INT  read_header(INT print_err)         // reads any header from archive
       return 0;                         // read CRC and header size
 
 #ifdef WORDS_BIGENDIAN
-   WORDswap(&head.HEAD_CRC);
-   WORDswap(&head.HEAD_SIZE);
+   head.HEAD_CRC  = bswap16(head.HEAD_CRC);
+   head.HEAD_SIZE = bswap16(head.HEAD_SIZE);
 #endif
                                         // read size_headrdb bytes into 
    head_size = head.HEAD_SIZE;          // header structure 

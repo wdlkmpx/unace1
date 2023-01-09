@@ -103,7 +103,7 @@ void readdat(void)
       p=&buf_rd[2];
       while (i--)
       {
-         LONGswap(p);
+         *p = bswap32(*p);
          p++; 
       }
    }
@@ -138,7 +138,7 @@ void dcpr_comm_init(void)
       p=buf_rd;
       while (i--)
       {
-         LONGswap(p);
+         *p = bswap32(*p);
          p++; 
       }
    }
@@ -507,7 +507,7 @@ void dcpr_init_file(void)
          p=buf_rd;
          while (i--)
          {
-            LONGswap(p);
+            *p = bswap32(*p);
             p++; 
          }
       }
