@@ -130,6 +130,7 @@ ERROR_LOG_FILES=''
 
 run_test()
 {
+    n_tests=$((n_tests+1))
     unset CHKFILE DIRFILE LOGFILE
     if [ -z "$TEST_FILE" ] ; then
         echo "** a \$TEST_FILE is required for run_test()"
@@ -217,6 +218,7 @@ run_test()
     else
         echo "ERROR"
         ERROR_LOG_FILES="$ERROR_LOG_FILES ${LOGFILE}"
+        failed_tests=$((failed_tests+1))
     fi
     if [ "$TEST_USE_SUBDIR" = "yes" ] ; then
         cd "${xcurdirx}"
@@ -265,6 +267,8 @@ rm -rf "${TESTDIR}"
 mkdir -p "${TESTDIR}"
 cd ${TESTDIR}
 
+failed_tests=0
+n_tests=0
 run_tests
 
 # ===========================================================================
@@ -280,6 +284,13 @@ fi
 
 printf "\n Logs are in $TESTDIR\n"
 echo "   (that dir is deleted and created everytime the tests are run)"
+echo
+
+if [ $failed_tests -gt 0 ] ; then
+    echo "*  $failed_tests out of $n_tests tests failed"
+else
+    echo "*  All OK"
+fi
 echo
 
 exit $ret
