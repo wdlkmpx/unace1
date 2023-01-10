@@ -1,22 +1,39 @@
 #!/bin/sh
 
-#RUN_TEST_SCRIPT_DIRECTLY=1
+case $1 in
+    debug|-debug)
+        RUN_TEST_SCRIPT_DIRECTLY=1 ;;
+    installpkg_alpine)
+        shift
+        set -x
+        apk add --no-cache ${@}
+        exit $?
+        ;;
+    installpkg_deb)
+        shift
+        set -ex
+        apt update
+        apt upgrade -y
+        apt-get install -y ${@}
+        exit $?
+        ;;
+    installpkg_macos)
+        shift
+        set -x
+        export HOMEBREW_NO_AUTO_UPDATE=1
+        brew install ${@}
+        exit $?
+        ;;
+    installpkg_freebsd)
+        shift
+        set -x
+        #export REPO_AUTOUPDATE=NO
+        pkg install -y ${@}
+        exit $?
+        ;;
+esac
 
 w_system=$(uname -s)
-
-if [ "$1" = "freebsd" ] ; then
-    #export REPO_AUTOUPDATE=NO
-    #pkg install -y ncurses
-    printf ""
-    exit $?
-fi
-
-if [ "$1" = "macos" ] ; then
-    export HOMEBREW_NO_AUTO_UPDATE=1
-    ## macOS already provides ncurses by default
-    #brew install ncurses
-    exit $?
-fi
 
 # ============================================
 
@@ -27,7 +44,6 @@ cmdecho()
     echo "---------------------"
     "$@"
 }
-
 
 print_config_log()
 {
@@ -41,7 +57,6 @@ print_config_log()
         cat ${i}
     done
 }
-
 
 exit_error()
 {

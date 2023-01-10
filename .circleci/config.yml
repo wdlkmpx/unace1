@@ -1,8 +1,7 @@
 # https://github.com/rokoDev/rabbit/blob/master/.circleci/config.yml
 #    https://discuss.circleci.com/t/is-it-possible-to-build-and-test-my-project-in-docker-container-with-s390x-architecture/44077
 # https://circleci.com/docs/variables/
-
-# Installing packages takes too long, use rokoDev's docker
+# s390x: Installing packages takes too long, use rokoDev's docker
 
 # These (and other) variables are wrong when using GitLab:
 # CIRCLE_REPOSITORY_URL  : empty
@@ -10,6 +9,23 @@
 # CIRCLE_PROJECT_REPONAME: wrong
 
 version: 2.1
+
+
+commands:
+  docker_build:
+    steps:
+      - run:
+          name: "checkout sources | build and test app"
+          command: |
+            CIRCLE_REPOSITORY_URL='https://gitlab.com/wdlkmpx/unace1'
+            docker exec -it wcontainer bash -c "(
+                        set -ex;
+                        git clone --depth 1 --branch ${CIRCLE_BRANCH} ${CIRCLE_REPOSITORY_URL}
+                        pwd;
+                        cd $(basename ${CIRCLE_REPOSITORY_URL});
+                        ./scripts/test_ci.sh;
+                        )"
+
 
 jobs:
   ubuntu_s390x:
@@ -25,31 +41,27 @@ jobs:
           command: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
       - run:
           name: Run docker container for s390x
-          command: docker run -it -d --platform linux/s390x --name ubuntu_z rokodev/ubuntu2204-dev:1.0
-#          command: docker run -it -d --platform linux/s390x --name ubuntu_z s390x/ubuntu
+          command: docker run -it -d --platform linux/s390x --name wcontainer rokodev/ubuntu2204-dev:1.0
+#          command: docker run -it -d --platform linux/s390x --name wcontainer s390x/ubuntu
 #      - run:
 #          name: "Install deps"
-#          command: docker exec -it ubuntu_z bash -c "(
+#          command: docker exec -it wcontainer bash -c "(
 #                        set -ex;
 #                        apt update;
 #                        apt upgrade -y;
 #                        apt-get install -y git build-essential gdb;
 #                        )"
-      - run:
-          name: "checkout sources"
-          command: |
-            CIRCLE_REPOSITORY_URL='https://gitlab.com/wdlkmpx/unace1'
-            docker exec -it ubuntu_z bash -c "set -x; git clone --depth 1 --branch ${CIRCLE_BRANCH} ${CIRCLE_REPOSITORY_URL}"
-      - run:
-          name: Configure, build and test app
-          command: |
-            CIRCLE_PROJECT_REPONAME='unace1'
-            docker exec -it ubuntu_z bash -c "(
-                        set -ex;
-                        pwd;
-                        cd ${CIRCLE_PROJECT_REPONAME};
-                        ./scripts/test_ci.sh;
-                        )"
+      - docker_build
+#  slackware_14:
+#    machine:
+#      image: ubuntu-2004:current
+#    steps:
+#      - run: printenv
+#      - run:
+#          name: Run docker container for slackware
+#          command: docker run -it -d --name wcontainer aclemons/slackware:14.0
+#      - docker_build
+
 
 workflows:
   build_and_test:
@@ -59,3 +71,8 @@ workflows:
             branches:
               only:
                 - master
+#      - slackware_14:
+#          filters:
+#            branches:
+#              only:
+#                - master
