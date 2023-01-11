@@ -49,7 +49,7 @@ jobs:
   ubuntu_s390x:
     machine:
       image: ubuntu-2204:current
-    resource_class: small
+    resource_class: medium
     environment:
       DOCKER_BUILDKIT: 1
     steps:
@@ -75,7 +75,7 @@ jobs:
   gcc_4_7:
     machine:
       image: ubuntu-2204:current
-    resource_class: small
+    resource_class: medium
     steps:
       - run: printenv
       - run:
