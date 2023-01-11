@@ -2,7 +2,8 @@
 
 case $1 in
     debug|-debug)
-        RUN_TEST_SCRIPT_DIRECTLY=1 ;;
+        RUN_TEST_SCRIPT_DIRECTLY=1
+        ;;
     installpkg_alpine)
         shift
         set -x
@@ -39,9 +40,10 @@ w_system=$(uname -s)
 
 cmdecho()
 {
-    echo "---------------------"
+    echo
+    echo "#################################"
     echo "# $@"
-    echo "---------------------"
+    echo "#################################"
     "$@"
 }
 
@@ -69,10 +71,13 @@ exit_error()
 
 uname -a
 echo
-cc --version 2>/dev/null
-echo
-id
-echo
+if command -v cc 1>/dev/null 2>&1 ; then
+    cc --version 2>/dev/null
+elif command -v gcc 1>/dev/null 2>&1 ; then
+    gcc --version 2>/dev/null
+fi
+#echo
+#id
 
 case "$w_system" in
     Darwin|FreeBSD)
@@ -88,11 +93,26 @@ export VERBOSE_ERRORS='yes' # the test script read this
 #export PRINT_SUM_ON_ERROR='yes'
 #exprt DOWNLOAD_IS_REQUIRED='yes'
 
-if [ "$RUN_TEST_SCRIPT_DIRECTLY" ] ; then
-    cmdecho ./scripts/run-tests.sh -debug || exit_error
-else
-    cmdecho ./configure  || exit_error
-    cmdecho make         || exit_error
-    cmdecho make check   || exit_error
-    #cmdecho make install || exit_error
+    #cmdecho ./configure  || exit_error
+    #cmdecho make         || exit_error
+    #cmdecho make check   || exit_error
+    ##cmdecho make install || exit_error
+
+# assuming we're testing a compiled binary that's built with -02 (optimizations)
+cmdecho ./scripts/run-tests.sh -rebuild
+if [ $? -ne 0 ] ; then
+    if grep -q ' -O2' config.log ; then
+        echo
+        echo "################################################################"  
+        echo "   Testing with extra debug symbols and without optimizations   "
+        echo "################################################################"
+        echo
+        # one or tests failed, segfaults?
+        # run with extra debug symbols and without optimizations
+        # if there are no segfaults, the optimizations are causing the segfaults
+        cmdecho ./scripts/run-tests.sh -debug
+    fi
+    exit_error
 fi
+
+

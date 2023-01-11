@@ -226,6 +226,15 @@ run_test()
     unset TEST_FILE TEST_ERROR_FILE TEST_EXIT_CODE
 }
 
+
+cmdecho()
+{
+    echo "---------------"
+    echo "# $@"
+    echo "---------------"
+    "$@"
+}
+
 # ===========================================================================
 
 if [ -f autogen.sh ] && [ ! -f configure ] ; then
@@ -234,15 +243,15 @@ fi
 
 if [ -f configure ] ; then
     if [ "$REBUILD" = "yes" ] || [ ! -f config.log ] ; then
-        ./configure ${configure_opts}
+        cmdecho ./configure ${configure_opts}
     fi
 fi
 
 if [ -f Makefile ] ; then
     if [ "$REBUILD" = "yes" ] ; then
-        ${make_clean}
+        cmdecho ${make_clean}
     fi
-    ${make_cmd}
+    cmdecho ${make_cmd}
 fi
 
 if test -f ${app} ; then
@@ -256,7 +265,7 @@ else
 fi
 
 # basic check
-check_app_help ${help_ret_code} "${app} ${help_param}"
+cmdecho check_app_help ${help_ret_code} "${app} ${help_param}"
 
 # ===========================================================================
 
@@ -277,7 +286,9 @@ ret=0
 
 if [ -n "$(echo $ERROR_LOG_FILES)" ] ; then
     ret=1
+    echo
     if [ "$VERBOSE_ERRORS" = "yes" ] ; then
+        echo "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
         cat $ERROR_LOG_FILES
     fi
 fi
