@@ -69,6 +69,8 @@ exit_error()
 
 uname -a
 echo
+cc --version 2>/dev/null
+echo
 id
 echo
 
