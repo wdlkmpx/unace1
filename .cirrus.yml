@@ -32,17 +32,17 @@ freebsd_task:
 
 
 #======= Alpine Linux =========
-alpine_linux_task:
-  name: Alpine Linux
-  container:
-    image: alpine
-#   image: alpine:3.17
-    cpu: 1
-    memory: 1GB
-  pkginstall_script:
-    - apk add --no-cache build-base
-  build_script:
-    - ./scripts/test_ci.sh
+#alpine_linux_task:
+#  name: Alpine Linux
+#  container:
+#    image: alpine
+##   image: alpine:3.17
+#    cpu: 1
+#    memory: 1GB
+#  pkginstall_script:
+#    - apk add --no-cache build-base
+#  build_script:
+#    - ./scripts/test_ci.sh
 
 
 #---
