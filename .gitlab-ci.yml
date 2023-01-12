@@ -1,10 +1,19 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE != 'merge_request_event'
 
-image: alpine
+variables:
+  GIT_DEPTH: "1"
 
-build:
-  stage: build
-  # instead of calling g++ directly you can also use some build toolkit like make
-  # install the necessary build tools when needed
+
+printenv:
+  stage: .pre
+  script:
+    - printenv
+
+gcc_musl:
+  image: alpine
+  stage: test
   before_script:
     - apk add --no-cache build-base
   script:
@@ -12,16 +21,14 @@ build:
 #  artifacts:
 #    paths:
 #      - mybinary
-#      # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
-#      # cache:
-#      #   paths:
-#      #     - "*.o"
 
-## run tests using the binary built before
-#test:
-#  stage: test
-#  script:
-#    - ./runmytests.sh
+
+gcc_glibc:
+  image: gcc
+  stage: test
+  script:
+    - ./scripts/test_ci.sh
+
 
 #deploy:
 #  stage: deploy
