@@ -69,6 +69,14 @@ exit_error()
 # ============================================
 # print some system info
 
+if [ -f /etc/os-release ] ; then
+    . /etc/os-release
+    echo "$PRETTY_NAME"
+    echo
+elif [ -f /etc/release ] ; then
+    cat /etc/release
+fi
+
 uname -a
 echo
 if command -v cc 1>/dev/null 2>&1 ; then

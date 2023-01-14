@@ -30,7 +30,7 @@ w_main_func()
 	# GCC=yes if gcc has been detected
 
 	# if the Makefiles are only compatible with GNU make, use w_require_gnu_make
-	#w_prefer_gnu_make
+	w_prefer_gnu_make
 
 	# check required headers and exit on error
 	w_check_headers_required stdio.h
