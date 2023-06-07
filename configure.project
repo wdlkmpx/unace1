@@ -17,11 +17,17 @@ PROJECT_LIBS=''
 # supported values: C, C++ ("" = C++)
 PROJECT_TYPE=C
 
+# Makefile
+MK_SUBDIRS="src"
+MK_DISTCLEAN_FILES=''
+MK_CHECK='scripts/run-tests.sh'
+
 # config.h: custom extra lines
 w_config_h_extra_lines=""
 
 # config.mk: custom extra lines
 w_config_mk_extra_lines=""
+
 
 # configure the project using the commands provided
 # by `configure` and other scripts and commands/tools
