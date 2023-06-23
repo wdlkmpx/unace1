@@ -63,7 +63,7 @@ distcheck:
 installcheck:
 
 dist:
-	sh configure release dist
+	sh configure release
 
 .PHONY: subdirs $(SUBDIRS)
 
