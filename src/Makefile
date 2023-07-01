@@ -23,6 +23,7 @@ clean:
 	rm -f *.o *~ $(APP)
 
 install: all
+	mkdir -p $(DESTDIR)$(bindir)
 	install $(APP) $(DESTDIR)$(bindir)
 
 install-strip: strip install
